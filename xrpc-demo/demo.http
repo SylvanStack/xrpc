@@ -11,3 +11,28 @@ Content-Type: application/json
   ]
 }
 
+### 根据订单ID获取订单信息
+
+POST http://localhost:8080/
+Content-Type: application/json
+
+{
+  "service": "com.yuanstack.xrpc.demo.api.service.OrderService",
+  "method": "findById",
+  "args": [
+    101
+  ]
+}
+
+### mock
+
+POST http://localhost:8080/
+Content-Type: application/json
+
+{
+  "service": "com.yuanstack.xrpc.demo.api.service.UserService",
+  "method": "toString",
+  "args": [
+   ]
+}
+
