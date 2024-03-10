@@ -1,4 +1,4 @@
-package com.sylvan.xrpc.core;
+package com.yuanstack.xrpc.core;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.yuanstack</groupId>
+        <artifactId>xrpc</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>xrpc-demo</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>xrpc-demo</name>
+    <packaging>pom</packaging>
+    <description>xrpc-demo</description>
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+
+    <modules>
+        <module>xrpc-demo-api</module>
+        <module>xrpc-demo-provider</module>
+    </modules>
+
+</project>
