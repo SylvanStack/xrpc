@@ -30,7 +30,7 @@ public class XrpcDemoProviderApplication {
             request.setMethod("findById");
             request.setArgs(new Object[]{100});
 
-            RpcResponse rpcResponse = providerBootstrap.invokeRequest(request);
+            RpcResponse rpcResponse = providerBootstrap.invoke(request);
             System.out.println("return:" + rpcResponse.getData());
         };
     }

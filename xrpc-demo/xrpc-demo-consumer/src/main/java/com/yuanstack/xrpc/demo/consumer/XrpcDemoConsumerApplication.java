@@ -34,6 +34,9 @@ public class XrpcDemoConsumerApplication {
 
             Order order = orderService.findById(2);
             System.out.println(order);
+
+            Order order404 = orderService.findById(404);
+            System.out.println(order404);
         };
     }
 

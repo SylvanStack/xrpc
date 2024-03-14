@@ -13,8 +13,8 @@ public interface OrderService {
     /**
      * 根据订单Id查询订单
      *
-     * @param userId 订单Id
+     * @param orderId 订单Id
      * @return 订单信息
      */
-    Order findById(Integer userId);
+    Order findById(Integer orderId);
 }

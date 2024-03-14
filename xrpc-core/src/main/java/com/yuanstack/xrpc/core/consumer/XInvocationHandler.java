@@ -35,8 +35,11 @@ public class XInvocationHandler implements InvocationHandler {
         if (rpcResponse.getStatus()) {
             JSONObject jsonResult = (JSONObject) rpcResponse.getData();
             return jsonResult.toJavaObject(method.getReturnType());
+        } else {
+            Exception exception = rpcResponse.getEx();
+            exception.printStackTrace();
+            throw exception;
         }
-        return null;
     }
 
     OkHttpClient client = new OkHttpClient().newBuilder()
@@ -48,6 +51,7 @@ public class XInvocationHandler implements InvocationHandler {
 
     private RpcResponse post(RpcRequest rpcRequest) {
         String reqJson = JSON.toJSONString(rpcRequest);
+        System.out.println("reqJson :" + reqJson);
 
         Request request = new Request.Builder()
                 .url("http://localhost:8080/")
@@ -55,8 +59,10 @@ public class XInvocationHandler implements InvocationHandler {
                 .build();
 
         try {
-            String respJson = client.newCall(request).execute().body().string();
+            String respJson = Objects.requireNonNull(client.newCall(request).execute().body()).string();
+            System.out.println("respJson :" + respJson);
             RpcResponse rpcResponse = JSON.parseObject(respJson, RpcResponse.class);
+            System.out.println(rpcResponse);
             return rpcResponse;
         } catch (IOException e) {
             throw new RuntimeException(e);

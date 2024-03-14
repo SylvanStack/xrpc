@@ -22,6 +22,6 @@ public class UserController {
 
     @PostMapping("/")
     public RpcResponse invoke(@RequestBody RpcRequest request) {
-        return providerBootstrap.invokeRequest(request);
+        return providerBootstrap.invoke(request);
     }
 }
