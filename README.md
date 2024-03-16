@@ -1,5 +1,5 @@
 # 如何设计一个 RPC？
->  详细计划请移步： https://www.yuque.com/yuanstack/pi0f3o
+>  详细计划请移步： [https://www.yuque.com/yuanstack/pi0f3o](https://www.yuque.com/sylvanstack/pi0f3o)
 
 ## 迭代计划
 ### V1.0 - 框架基础与核心功能
