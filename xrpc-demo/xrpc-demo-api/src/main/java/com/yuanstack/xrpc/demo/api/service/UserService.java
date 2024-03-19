@@ -27,6 +27,26 @@ public interface UserService {
     User findById(Integer userId, String nickname);
 
     /**
+     * 方法重载Case
+     */
+    String getName(Integer userId);
+
+    /**
+     * 方法重载Case
+     */
+    String getName(String nickname);
+
+    /**
+     * 类型转换Case
+     */
+    Long getUserId(Long userId);
+
+    /**
+     * 类型转换Case
+     */
+    Long getUserId(User user);
+
+    /**
      * 返回基本类型Case
      *
      * @param userId 用户Id
