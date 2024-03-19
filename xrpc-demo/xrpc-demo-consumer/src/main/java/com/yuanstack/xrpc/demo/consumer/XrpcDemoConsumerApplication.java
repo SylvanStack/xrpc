@@ -32,11 +32,22 @@ public class XrpcDemoConsumerApplication {
             User user = userService.findById(1);
             System.out.println(user);
 
+            // 重载Case
+            User user2 = userService.findById(2, "Stack");
+            System.out.println(user2);
+
             Order order = orderService.findById(2);
             System.out.println(order);
 
-            Order order404 = orderService.findById(404);
-            System.out.println(order404);
+            // 异常case
+            //Order order404 = orderService.findById(404);
+            //System.out.println(order404);
+
+            // 返回基本类型Case
+            int userId = userService.getId(2);
+            System.out.println(userId);
+
+            System.out.println(orderService.toString());
         };
     }
 

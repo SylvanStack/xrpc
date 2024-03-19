@@ -25,13 +25,23 @@ public class XrpcDemoProviderApplication {
     @Bean
     ApplicationRunner providerRunner() {
         return x -> {
+            // test 1 parameter method
             RpcRequest request = new RpcRequest();
             request.setService("com.yuanstack.xrpc.demo.api.service.UserService");
-            request.setMethod("findById");
+            request.setMethodSign("findById@1_java.lang.Integer");
             request.setArgs(new Object[]{100});
 
             RpcResponse rpcResponse = providerBootstrap.invoke(request);
             System.out.println("return:" + rpcResponse.getData());
+
+            // test 2 parameters method
+            RpcRequest request2 = new RpcRequest();
+            request2.setService("com.yuanstack.xrpc.demo.api.service.UserService");
+            request2.setMethodSign("findById@2_java.lang.Integer_java.lang.String");
+            request2.setArgs(new Object[]{101, "Stack"});
+
+            RpcResponse rpcResponse2 = providerBootstrap.invoke(request2);
+            System.out.println("return:" + rpcResponse2.getData());
         };
     }
 }

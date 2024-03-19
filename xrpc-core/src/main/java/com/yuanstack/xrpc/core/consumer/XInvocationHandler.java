@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
+import com.yuanstack.xrpc.core.util.MethodUtils;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -26,15 +27,23 @@ public class XInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if (MethodUtils.isObjectMethod(method)) {
+            return null;
+        }
+
         RpcRequest request = new RpcRequest();
         request.setService(service.getCanonicalName());
-        request.setMethod(method.getName());
+        request.setMethodSign(MethodUtils.generateMethodSign(method));
         request.setArgs(args);
 
         RpcResponse rpcResponse = post(request);
         if (rpcResponse.getStatus()) {
-            JSONObject jsonResult = (JSONObject) rpcResponse.getData();
-            return jsonResult.toJavaObject(method.getReturnType());
+            if (rpcResponse.getData() instanceof JSONObject) {
+                JSONObject jsonResult = (JSONObject) rpcResponse.getData();
+                return jsonResult.toJavaObject(method.getReturnType());
+            } else {
+                return rpcResponse.getData();
+            }
         } else {
             Exception exception = rpcResponse.getEx();
             exception.printStackTrace();
@@ -42,12 +51,12 @@ public class XInvocationHandler implements InvocationHandler {
         }
     }
 
-    OkHttpClient client = new OkHttpClient().newBuilder()
+    OkHttpClient client = new OkHttpClient()
+            .newBuilder()
             .connectionPool(new ConnectionPool(16, 60, TimeUnit.SECONDS))
             .readTimeout(1, TimeUnit.SECONDS)
             .writeTimeout(1, TimeUnit.SECONDS)
-            .connectTimeout(1, TimeUnit.SECONDS)
-            .build();
+            .connectTimeout(1, TimeUnit.SECONDS).build();
 
     private RpcResponse post(RpcRequest rpcRequest) {
         String reqJson = JSON.toJSONString(rpcRequest);

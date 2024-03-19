@@ -16,7 +16,7 @@ public class MethodUtils {
      * @param methodName 方法名
      * @return true 是，false 否
      */
-    public static boolean isDefaultMethod(String methodName) {
+    public static boolean isObjectMethod(String methodName) {
         if ("toSting".equals(methodName) ||
                 "hashCode".equals(methodName) ||
                 "notifyAll".equals(methodName) ||
@@ -29,7 +29,7 @@ public class MethodUtils {
         return false;
     }
 
-    public static boolean isDefaultMethod(Method method) {
+    public static boolean isObjectMethod(Method method) {
         return method.getDeclaringClass().equals(Object.class);
     }
 
