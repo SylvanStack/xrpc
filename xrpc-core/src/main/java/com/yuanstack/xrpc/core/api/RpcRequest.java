@@ -9,6 +9,6 @@ import lombok.Data;
 @Data
 public class RpcRequest {
     private String service; // 服务：com.yuanstack.xrpc.demo.api.service.UserService
-    private String method; // 方法：findById
+    private String methodSign; // 方法签名：findById
     private Object[] args; // 参数：1000L
 }

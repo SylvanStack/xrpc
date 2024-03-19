@@ -5,9 +5,23 @@ Content-Type: application/json
 
 {
   "service": "com.yuanstack.xrpc.demo.api.service.UserService",
-  "method": "findById",
+  "methodSign": "findById@1_java.lang.Integer",
   "args": [
     101
+  ]
+}
+
+### 根据用户ID获取用户信息
+
+POST http://localhost:8080/
+Content-Type: application/json
+
+{
+  "service": "com.yuanstack.xrpc.demo.api.service.UserService",
+  "methodSign": "findById@2_java.lang.Integer_java.lang.String",
+  "args": [
+    101,
+    "Stack"
   ]
 }
 
@@ -18,7 +32,7 @@ Content-Type: application/json
 
 {
   "service": "com.yuanstack.xrpc.demo.api.service.OrderService",
-  "method": "findById",
+  "methodSign": "findById@1_java.lang.Integer",
   "args": [
     101
   ]
@@ -31,8 +45,8 @@ Content-Type: application/json
 
 {
   "service": "com.yuanstack.xrpc.demo.api.service.UserService",
-  "method": "toString",
+  "methodSign": "toString",
   "args": [
-   ]
+  ]
 }
 

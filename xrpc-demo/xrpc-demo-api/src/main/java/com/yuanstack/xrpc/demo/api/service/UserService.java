@@ -17,4 +17,20 @@ public interface UserService {
      * @return 用户信息
      */
     User findById(Integer userId);
+
+    /**
+     * 方法重载Case
+     *
+     * @param userId 用户Id
+     * @return 用户信息
+     */
+    User findById(Integer userId, String nickname);
+
+    /**
+     * 返回基本类型Case
+     *
+     * @param userId 用户Id
+     * @return int
+     */
+    int getId(Integer userId);
 }
