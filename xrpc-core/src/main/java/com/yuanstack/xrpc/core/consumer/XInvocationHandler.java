@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
 import com.yuanstack.xrpc.core.util.MethodUtils;
+import com.yuanstack.xrpc.core.util.TypeUtils;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -42,12 +43,10 @@ public class XInvocationHandler implements InvocationHandler {
                 JSONObject jsonResult = (JSONObject) rpcResponse.getData();
                 return jsonResult.toJavaObject(method.getReturnType());
             } else {
-                return rpcResponse.getData();
+                return TypeUtils.cast(rpcResponse.getData(), method.getReturnType());
             }
         } else {
-            Exception exception = rpcResponse.getEx();
-            exception.printStackTrace();
-            throw exception;
+            throw rpcResponse.getEx();
         }
     }
 
