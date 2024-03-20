@@ -45,6 +45,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Long getUserId(Float userId) {
+        System.out.println(userId);
+        ;
+        return 10L;
+    }
+
+    @Override
+    public Long getUserId() {
+        return 10L;
+    }
+
+    @Override
+    public int[] getUserIds(int[] userIds) {
+        return userIds;
+    }
+
+    @Override
     public int getId(Integer userId) {
         return userId;
     }

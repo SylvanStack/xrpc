@@ -20,6 +20,7 @@
     <modules>
         <module>xrpc-demo-api</module>
         <module>xrpc-demo-provider</module>
+        <module>xrpc-demo-consumer</module>
     </modules>
 
 </project>

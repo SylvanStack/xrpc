@@ -1,5 +1,12 @@
 package com.yuanstack.xrpc.core.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * 类型工具类
  *
@@ -15,6 +22,25 @@ public class TypeUtils {
         Class<?> aClass = origin.getClass();
         if (type.isAssignableFrom(aClass)) {
             return origin;
+        }
+
+        if (type.isArray()) {
+            if (origin instanceof List list) {
+                origin = list.toArray();
+            }
+
+            int length = Array.getLength(origin);
+            Class<?> componentType = type.getComponentType();
+            Object resultArray = Array.newInstance(componentType, length);
+            for (int i = 0; i < length; i++) {
+                Array.set(resultArray, i, Array.get(origin, i));
+            }
+            return resultArray;
+        }
+
+        if (origin instanceof HashMap map) {
+            JSONObject jsonObject = new JSONObject(map);
+            return jsonObject.toJavaObject(type);
         }
 
         if (type.equals(Long.class) || type.equals(Long.TYPE)) {

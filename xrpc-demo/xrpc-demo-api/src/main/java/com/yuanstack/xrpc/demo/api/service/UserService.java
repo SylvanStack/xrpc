@@ -47,6 +47,21 @@ public interface UserService {
     Long getUserId(User user);
 
     /**
+     * 类型转换Case
+     */
+    Long getUserId(Float userId);
+
+    /**
+     * 类型转换Case
+     */
+    Long getUserId();
+
+    /**
+     * 类型转换Case
+     */
+    int[] getUserIds(int[] userIds);
+
+    /**
      * 返回基本类型Case
      *
      * @param userId 用户Id
