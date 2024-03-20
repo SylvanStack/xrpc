@@ -3,6 +3,8 @@ package com.yuanstack.xrpc.core.consumer;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yuanstack.xrpc.core.api.Loadbalancer;
+import com.yuanstack.xrpc.core.api.Router;
 import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
 import com.yuanstack.xrpc.core.util.MethodUtils;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -23,9 +26,15 @@ import java.util.concurrent.TimeUnit;
 public class XInvocationHandler implements InvocationHandler {
     final static MediaType JSON_TYPE = MediaType.get("application/json; charset=utf-8");
     Class<?> service;
+    Router router;
+    Loadbalancer loadbalancer;
+    String[] providers;
 
-    public XInvocationHandler(Class<?> service) {
+    public XInvocationHandler(Class<?> service, Router router, Loadbalancer loadbalancer, String[] providers) {
         this.service = service;
+        this.router = router;
+        this.loadbalancer = loadbalancer;
+        this.providers = providers;
     }
 
     @Override
@@ -39,7 +48,10 @@ public class XInvocationHandler implements InvocationHandler {
         request.setMethodSign(MethodUtils.generateMethodSign(method));
         request.setArgs(args);
 
-        RpcResponse rpcResponse = post(request);
+        List<String> urls = router.route(List.of(providers));
+        String url = loadbalancer.choose(urls);
+
+        RpcResponse rpcResponse = post(request, url);
         if (rpcResponse.getStatus()) {
             if (rpcResponse.getData() instanceof JSONObject) {
                 JSONObject jsonResult = (JSONObject) rpcResponse.getData();
@@ -67,12 +79,13 @@ public class XInvocationHandler implements InvocationHandler {
             .writeTimeout(1, TimeUnit.SECONDS)
             .connectTimeout(1, TimeUnit.SECONDS).build();
 
-    private RpcResponse post(RpcRequest rpcRequest) {
+    private RpcResponse post(RpcRequest rpcRequest, String url) {
         String reqJson = JSON.toJSONString(rpcRequest);
         System.out.println("reqJson :" + reqJson);
+        System.out.println("url :" + url);
 
         Request request = new Request.Builder()
-                .url("http://localhost:8080/")
+                .url(url)
                 .post(RequestBody.create(reqJson, JSON_TYPE))
                 .build();
 

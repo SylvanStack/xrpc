@@ -3,6 +3,8 @@ package com.yuanstack.xrpc.demo.provider.service.impl;
 import com.yuanstack.xrpc.core.annotation.XProvider;
 import com.yuanstack.xrpc.demo.api.dto.User;
 import com.yuanstack.xrpc.demo.api.service.UserService;
+import jakarta.annotation.Resource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,9 +19,13 @@ import java.util.Map;
 @Service
 @XProvider
 public class UserServiceImpl implements UserService {
+    @Resource
+    private Environment environment;
+
     @Override
-    public User findById(Integer userId) {
-        return new User(userId, "Sylvan-" + System.currentTimeMillis());
+    public User
+    findById(Integer userId) {
+        return new User(userId, "Sylvan-" + environment.getProperty("server.port") + "-" + System.currentTimeMillis());
     }
 
     @Override

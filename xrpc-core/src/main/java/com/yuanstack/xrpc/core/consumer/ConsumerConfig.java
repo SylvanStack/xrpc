@@ -1,5 +1,7 @@
 package com.yuanstack.xrpc.core.consumer;
 
+import com.yuanstack.xrpc.core.api.Loadbalancer;
+import com.yuanstack.xrpc.core.api.Router;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +27,16 @@ public class ConsumerConfig {
             System.out.println("consumerBootstrapRunner");
             consumerBootstrap.start();
         };
+    }
+
+    @Bean
+    public Loadbalancer loadbalancer() {
+        return Loadbalancer.Default;
+    }
+
+    @Bean
+    public Router router() {
+        return Router.Default;
     }
 
 }
