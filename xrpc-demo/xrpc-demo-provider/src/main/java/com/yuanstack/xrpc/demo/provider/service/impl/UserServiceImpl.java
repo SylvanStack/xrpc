@@ -5,6 +5,9 @@ import com.yuanstack.xrpc.demo.api.dto.User;
 import com.yuanstack.xrpc.demo.api.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 用户服务实现类
  *
@@ -42,6 +45,33 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long getUserId(User user) {
         return Long.valueOf(user.getId());
+    }
+
+    @Override
+    public Long getUserId(Float userId) {
+        System.out.println(userId);
+        ;
+        return 10L;
+    }
+
+    @Override
+    public Long getUserId() {
+        return 10L;
+    }
+
+    @Override
+    public int[] getUserIds(int[] userIds) {
+        return userIds;
+    }
+
+    @Override
+    public List<User> getUserIds(List<User> users) {
+        return null;
+    }
+
+    @Override
+    public Map<String, User> getUserIds(Map<String, User> userMap) {
+        return null;
     }
 
     @Override

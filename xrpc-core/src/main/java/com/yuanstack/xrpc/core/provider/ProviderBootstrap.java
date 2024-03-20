@@ -5,6 +5,7 @@ import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
 import com.yuanstack.xrpc.core.meta.ProviderMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
+import com.yuanstack.xrpc.core.util.TypeUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.context.ApplicationContext;
@@ -14,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,15 +38,16 @@ public class ProviderBootstrap implements ApplicationContextAware {
     }
 
     private void genInterface(Object x) {
-        Class<?> anInterface = x.getClass().getInterfaces()[0];
-        Method[] methods = anInterface.getMethods();
-        for (Method method : methods) {
-            if (MethodUtils.isObjectMethod(method)) {
-                continue;
-            }
+        Arrays.stream(x.getClass().getInterfaces()).forEach(anInterface -> {
+            Method[] methods = anInterface.getMethods();
+            for (Method method : methods) {
+                if (MethodUtils.isObjectMethod(method)) {
+                    continue;
+                }
 
-            createProvider(anInterface, x, method);
-        }
+                createProvider(anInterface, x, method);
+            }
+        });
     }
 
     private void createProvider(Class<?> anInterface, Object x, Method method) {
@@ -62,7 +65,8 @@ public class ProviderBootstrap implements ApplicationContextAware {
         try {
             ProviderMeta providerMeta = findProviderMeta(providerMetas, request.getMethodSign());
             Method method = providerMeta.getMethod();
-            Object result = method.invoke(providerMeta.getServiceImpl(), request.getArgs());
+            Object[] args = processArgs(request.getArgs(), method.getParameterTypes());
+            Object result = method.invoke(providerMeta.getServiceImpl(), args);
             rpcResponse.setData(result);
             rpcResponse.setStatus(true);
         } catch (InvocationTargetException e) {
@@ -71,6 +75,18 @@ public class ProviderBootstrap implements ApplicationContextAware {
             rpcResponse.setEx(new RuntimeException(e.getMessage()));
         }
         return rpcResponse;
+    }
+
+    private Object[] processArgs(Object[] args, Class<?>[] parameterTypes) {
+        if (args == null || args.length == 0) {
+            return args;
+        }
+
+        Object[] actuals = new Object[args.length];
+        for (int i = 0; i < args.length; i++) {
+            actuals[i] = TypeUtils.cast(args[i], parameterTypes[i]);
+        }
+        return actuals;
     }
 
     private ProviderMeta findProviderMeta(List<ProviderMeta> providerMetas, String methodSign) {

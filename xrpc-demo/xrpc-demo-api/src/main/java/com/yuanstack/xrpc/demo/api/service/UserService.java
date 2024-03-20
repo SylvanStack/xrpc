@@ -2,6 +2,9 @@ package com.yuanstack.xrpc.demo.api.service;
 
 import com.yuanstack.xrpc.demo.api.dto.User;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 用户服务类
  *
@@ -45,6 +48,31 @@ public interface UserService {
      * 类型转换Case
      */
     Long getUserId(User user);
+
+    /**
+     * 类型转换Case
+     */
+    Long getUserId(Float userId);
+
+    /**
+     * 类型转换Case
+     */
+    Long getUserId();
+
+    /**
+     * 类型转换Case
+     */
+    int[] getUserIds(int[] userIds);
+
+    /**
+     * 类型转换Case TODO
+     */
+    List<User> getUserIds(List<User> users);
+
+    /**
+     * 类型转换Case  TODO
+     */
+    Map<String, User> getUserIds(Map<String, User> userMap);
 
     /**
      * 返回基本类型Case
