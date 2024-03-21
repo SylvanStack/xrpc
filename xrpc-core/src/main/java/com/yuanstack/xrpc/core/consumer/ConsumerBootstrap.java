@@ -2,10 +2,10 @@ package com.yuanstack.xrpc.core.consumer;
 
 import com.yuanstack.xrpc.core.annotation.XConsumer;
 import com.yuanstack.xrpc.core.api.Loadbalancer;
+import com.yuanstack.xrpc.core.api.RegistryCenter;
 import com.yuanstack.xrpc.core.api.Router;
 import com.yuanstack.xrpc.core.api.RpcContext;
 import lombok.Data;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
@@ -37,12 +37,7 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
         RpcContext rpcContext = new RpcContext();
         rpcContext.setRouter(router);
         rpcContext.setLoadbalancer(loadbalancer);
-
-        String urls = environment.getProperty("xrpc.providers", "");
-        if (Strings.isEmpty(urls)) {
-            System.out.println("xrpc.providers is empty.");
-        }
-        String[] providers = urls.split(",");
+        RegistryCenter registryCenter = applicationContext.getBean(RegistryCenter.class);
 
         String[] beanDefinitionNames = applicationContext.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
@@ -57,7 +52,7 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
 
                     Object consumer = stub.get(serviceName);
                     if (consumer == null) {
-                        consumer = createConsumer(service, rpcContext, List.of(providers));
+                        consumer = createConsumerFromRegistry(service, rpcContext, registryCenter);
                     }
 
                     field.setAccessible(true);
@@ -67,6 +62,12 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
                 }
             });
         }
+    }
+
+    private Object createConsumerFromRegistry(Class<?> service, RpcContext context, RegistryCenter rc) {
+        String serviceName = service.getCanonicalName();
+        List<String> providers = rc.fetchAll(serviceName);
+        return createConsumer(service, context, providers);
     }
 
     private Object createConsumer(Class<?> service, RpcContext rpcContext, List<String> providers) {
