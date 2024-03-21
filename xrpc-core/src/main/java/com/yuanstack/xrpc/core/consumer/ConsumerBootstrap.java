@@ -1,33 +1,49 @@
 package com.yuanstack.xrpc.core.consumer;
 
 import com.yuanstack.xrpc.core.annotation.XConsumer;
-import com.yuanstack.xrpc.core.annotation.XProvider;
-import com.yuanstack.xrpc.core.api.RpcRequest;
-import com.yuanstack.xrpc.core.api.RpcResponse;
-import jakarta.annotation.PostConstruct;
+import com.yuanstack.xrpc.core.api.Loadbalancer;
+import com.yuanstack.xrpc.core.api.Router;
+import com.yuanstack.xrpc.core.api.RpcContext;
 import lombok.Data;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 
-import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Sylvan
  * @date 2024/03/10  13:20
  */
 @Data
-public class ConsumerBootstrap implements ApplicationContextAware {
+public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAware {
 
     private ApplicationContext applicationContext;
+    private Environment environment;
 
     private Map<String, Object> stub = new HashMap<>();
 
     public void start() {
+        Router router = applicationContext.getBean(Router.class);
+        Loadbalancer loadbalancer = applicationContext.getBean(Loadbalancer.class);
+
+        RpcContext rpcContext = new RpcContext();
+        rpcContext.setRouter(router);
+        rpcContext.setLoadbalancer(loadbalancer);
+
+        String urls = environment.getProperty("xrpc.providers", "");
+        if (Strings.isEmpty(urls)) {
+            System.out.println("xrpc.providers is empty.");
+        }
+        String[] providers = urls.split(",");
+
         String[] beanDefinitionNames = applicationContext.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
             Object bean = applicationContext.getBean(beanDefinitionName);
@@ -41,7 +57,7 @@ public class ConsumerBootstrap implements ApplicationContextAware {
 
                     Object consumer = stub.get(serviceName);
                     if (consumer == null) {
-                        consumer = createConsumer(service);
+                        consumer = createConsumer(service, rpcContext, List.of(providers));
                     }
 
                     field.setAccessible(true);
@@ -53,8 +69,10 @@ public class ConsumerBootstrap implements ApplicationContextAware {
         }
     }
 
-    private Object createConsumer(Class<?> service) {
-        return Proxy.newProxyInstance(service.getClassLoader(), new Class[]{service}, new XInvocationHandler(service));
+    private Object createConsumer(Class<?> service, RpcContext rpcContext, List<String> providers) {
+        return Proxy.newProxyInstance(service.getClassLoader(),
+                new Class[]{service},
+                new XInvocationHandler(service, rpcContext, providers));
     }
 
     private List<Field> findAnnotatedField(Class<?> aClass) {

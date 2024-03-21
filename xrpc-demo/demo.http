@@ -1,6 +1,6 @@
 ### 根据用户ID获取用户信息
 
-POST http://localhost:8080/
+POST http://localhost:8081/
 Content-Type: application/json
 
 {
@@ -13,7 +13,7 @@ Content-Type: application/json
 
 ### 根据用户ID获取用户信息
 
-POST http://localhost:8080/
+POST http://localhost:8081/
 Content-Type: application/json
 
 {
@@ -27,7 +27,7 @@ Content-Type: application/json
 
 ### 根据订单ID获取订单信息
 
-POST http://localhost:8080/
+POST http://localhost:8081/
 Content-Type: application/json
 
 {
@@ -40,7 +40,7 @@ Content-Type: application/json
 
 ### mock
 
-POST http://localhost:8080/
+POST http://localhost:8081/
 Content-Type: application/json
 
 {
