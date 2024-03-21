@@ -1,0 +1,4 @@
+### 根据用户ID获取用户信息
+
+POST http://localhost:8080/?userId=100
+
