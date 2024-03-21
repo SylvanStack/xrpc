@@ -12,12 +12,12 @@ import java.util.Random;
  * @date 2024/03/20  23:15
  */
 @Component
-public class RandomLoadbalancer implements Loadbalancer {
+public class RandomLoadbalancer<T> implements Loadbalancer<T> {
 
     Random random = new Random();
 
     @Override
-    public String choose(List<String> providers) {
+    public T choose(List<T> providers) {
         if (CollectionUtils.isEmpty(providers)) {
             return null;
         }

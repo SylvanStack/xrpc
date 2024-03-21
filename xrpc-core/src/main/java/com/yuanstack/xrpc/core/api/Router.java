@@ -6,9 +6,9 @@ import java.util.List;
  * @author Sylvan
  * @date 2024/03/20  23:15
  */
-public interface Router {
+public interface Router<T> {
 
-    List<String> route(List<String> providers);
+    List<T> route(List<T> providers);
 
     Router Default = p -> p;
 }

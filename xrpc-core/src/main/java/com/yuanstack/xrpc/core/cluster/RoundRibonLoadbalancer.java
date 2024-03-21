@@ -5,20 +5,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Sylvan
  * @date 2024/03/20  23:15
  */
 @Component
-public class RoundRibonLoadbalancer implements Loadbalancer {
+public class RoundRibonLoadbalancer<T> implements Loadbalancer<T> {
     AtomicInteger index = new AtomicInteger();
 
     @Override
-    public String choose(List<String> providers) {
+    public T choose(List<T> providers) {
         if (CollectionUtils.isEmpty(providers)) {
             return null;
         }

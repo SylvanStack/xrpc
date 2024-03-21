@@ -3,6 +3,7 @@ package com.yuanstack.xrpc.core.consumer;
 import com.yuanstack.xrpc.core.annotation.XConsumer;
 import com.yuanstack.xrpc.core.api.Loadbalancer;
 import com.yuanstack.xrpc.core.api.Router;
+import com.yuanstack.xrpc.core.api.RpcContext;
 import lombok.Data;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.ApplicationContext;
@@ -32,6 +33,11 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
     public void start() {
         Router router = applicationContext.getBean(Router.class);
         Loadbalancer loadbalancer = applicationContext.getBean(Loadbalancer.class);
+
+        RpcContext rpcContext = new RpcContext();
+        rpcContext.setRouter(router);
+        rpcContext.setLoadbalancer(loadbalancer);
+
         String urls = environment.getProperty("xrpc.providers", "");
         if (Strings.isEmpty(urls)) {
             System.out.println("xrpc.providers is empty.");
@@ -51,7 +57,7 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
 
                     Object consumer = stub.get(serviceName);
                     if (consumer == null) {
-                        consumer = createConsumer(service, router, loadbalancer, providers);
+                        consumer = createConsumer(service, rpcContext, List.of(providers));
                     }
 
                     field.setAccessible(true);
@@ -63,10 +69,10 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
         }
     }
 
-    private Object createConsumer(Class<?> service, Router router, Loadbalancer loadbalancer, String[] providers) {
+    private Object createConsumer(Class<?> service, RpcContext rpcContext, List<String> providers) {
         return Proxy.newProxyInstance(service.getClassLoader(),
                 new Class[]{service},
-                new XInvocationHandler(service, router, loadbalancer, providers));
+                new XInvocationHandler(service, rpcContext, providers));
     }
 
     private List<Field> findAnnotatedField(Class<?> aClass) {

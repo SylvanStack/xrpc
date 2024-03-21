@@ -3,10 +3,7 @@ package com.yuanstack.xrpc.core.consumer;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yuanstack.xrpc.core.api.Loadbalancer;
-import com.yuanstack.xrpc.core.api.Router;
-import com.yuanstack.xrpc.core.api.RpcRequest;
-import com.yuanstack.xrpc.core.api.RpcResponse;
+import com.yuanstack.xrpc.core.api.*;
 import com.yuanstack.xrpc.core.util.MethodUtils;
 import com.yuanstack.xrpc.core.util.TypeUtils;
 import okhttp3.*;
@@ -26,14 +23,12 @@ import java.util.concurrent.TimeUnit;
 public class XInvocationHandler implements InvocationHandler {
     final static MediaType JSON_TYPE = MediaType.get("application/json; charset=utf-8");
     Class<?> service;
-    Router router;
-    Loadbalancer loadbalancer;
-    String[] providers;
+    RpcContext rpcContext;
+    List<String> providers;
 
-    public XInvocationHandler(Class<?> service, Router router, Loadbalancer loadbalancer, String[] providers) {
+    public XInvocationHandler(Class<?> service, RpcContext rpcContext, List<String> providers) {
         this.service = service;
-        this.router = router;
-        this.loadbalancer = loadbalancer;
+        this.rpcContext = rpcContext;
         this.providers = providers;
     }
 
@@ -48,8 +43,8 @@ public class XInvocationHandler implements InvocationHandler {
         request.setMethodSign(MethodUtils.generateMethodSign(method));
         request.setArgs(args);
 
-        List<String> urls = router.route(List.of(providers));
-        String url = loadbalancer.choose(urls);
+        List<String> urls = rpcContext.getRouter().route(providers);
+        String url = (String) rpcContext.getLoadbalancer().choose(urls);
 
         System.out.println("loadbalancer.choose(urls) ==> " + url);
 
