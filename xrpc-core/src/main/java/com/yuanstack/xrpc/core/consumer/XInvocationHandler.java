@@ -51,6 +51,8 @@ public class XInvocationHandler implements InvocationHandler {
         List<String> urls = router.route(List.of(providers));
         String url = loadbalancer.choose(urls);
 
+        System.out.println("loadbalancer.choose(urls) ==> " + url);
+
         RpcResponse rpcResponse = post(request, url);
         if (rpcResponse.getStatus()) {
             if (rpcResponse.getData() instanceof JSONObject) {

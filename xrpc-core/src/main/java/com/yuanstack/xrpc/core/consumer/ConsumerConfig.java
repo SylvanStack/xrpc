@@ -2,6 +2,8 @@ package com.yuanstack.xrpc.core.consumer;
 
 import com.yuanstack.xrpc.core.api.Loadbalancer;
 import com.yuanstack.xrpc.core.api.Router;
+import com.yuanstack.xrpc.core.cluster.RandomLoadbalancer;
+import com.yuanstack.xrpc.core.cluster.RoundRibonLoadbalancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +33,9 @@ public class ConsumerConfig {
 
     @Bean
     public Loadbalancer loadbalancer() {
-        return Loadbalancer.Default;
+        //return Loadbalancer.Default;
+        //return new RandomLoadbalancer();
+        return new RoundRibonLoadbalancer();
     }
 
     @Bean
