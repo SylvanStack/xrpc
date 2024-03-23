@@ -18,6 +18,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * 消费端启动类
+ *
  * @author Sylvan
  * @date 2024/03/10  13:20
  */
@@ -30,8 +32,8 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
     private Map<String, Object> stub = new HashMap<>();
 
     public void start() {
-        Router router = applicationContext.getBean(Router.class);
-        Loadbalancer loadbalancer = applicationContext.getBean(Loadbalancer.class);
+        Router<?> router = applicationContext.getBean(Router.class);
+        Loadbalancer<?> loadbalancer = applicationContext.getBean(Loadbalancer.class);
 
         RpcContext rpcContext = new RpcContext();
         rpcContext.setRouter(router);
@@ -52,6 +54,7 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
                     Object consumer = stub.get(serviceName);
                     if (consumer == null) {
                         consumer = createConsumerFromRegistry(service, rpcContext, registryCenter);
+                        stub.put(serviceName, consumer);
                     }
 
                     field.setAccessible(true);
