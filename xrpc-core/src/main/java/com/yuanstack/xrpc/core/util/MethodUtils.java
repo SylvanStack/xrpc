@@ -1,6 +1,12 @@
 package com.yuanstack.xrpc.core.util;
 
+import com.yuanstack.xrpc.core.annotation.XConsumer;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 方法工具类
@@ -47,6 +53,21 @@ public class MethodUtils {
             stringBuilder.append("_").append(parameterType.getCanonicalName());
         }
         return stringBuilder.toString();
+    }
+
+    public static List<Field> findAnnotatedField(Class<?> aClass, Class<? extends Annotation> annotationClass) {
+        List<Field> result = new ArrayList<>();
+        while (aClass != null) {
+            Field[] fields = aClass.getDeclaredFields();
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(annotationClass)) {
+                    result.add(field);
+                }
+            }
+
+            aClass = aClass.getSuperclass();
+        }
+        return result;
     }
 
     public static void main(String[] args) {

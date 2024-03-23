@@ -2,8 +2,8 @@ package com.yuanstack.xrpc.demo.provider;
 
 import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
-import com.yuanstack.xrpc.core.provider.ProviderBootstrap;
 import com.yuanstack.xrpc.core.provider.ProviderConfig;
+import com.yuanstack.xrpc.core.provider.ProviderInvoker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -20,7 +20,7 @@ public class XrpcDemoProviderApplication {
     }
 
     @Autowired
-    private ProviderBootstrap providerBootstrap;
+    private ProviderInvoker providerInvoker;
 
     @Bean
     ApplicationRunner providerRunner() {
@@ -31,7 +31,7 @@ public class XrpcDemoProviderApplication {
             request.setMethodSign("findById@1_java.lang.Integer");
             request.setArgs(new Object[]{100});
 
-            RpcResponse rpcResponse = providerBootstrap.invoke(request);
+            RpcResponse<Object> rpcResponse = providerInvoker.invoke(request);
             System.out.println("return:" + rpcResponse.getData());
 
             // test 2 parameters method
@@ -40,7 +40,7 @@ public class XrpcDemoProviderApplication {
             request2.setMethodSign("findById@2_java.lang.Integer_java.lang.String");
             request2.setArgs(new Object[]{101, "Stack"});
 
-            RpcResponse rpcResponse2 = providerBootstrap.invoke(request2);
+            RpcResponse<Object> rpcResponse2 = providerInvoker.invoke(request2);
             System.out.println("return:" + rpcResponse2.getData());
         };
     }

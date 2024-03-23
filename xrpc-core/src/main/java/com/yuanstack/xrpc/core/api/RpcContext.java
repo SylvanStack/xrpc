@@ -1,5 +1,6 @@
 package com.yuanstack.xrpc.core.api;
 
+import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import lombok.Data;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 public class RpcContext {
     List<Filter> filters; // todo
 
-    Router router;
+    Router<InstanceMeta> router;
 
-    Loadbalancer loadbalancer;
+    Loadbalancer<InstanceMeta> loadbalancer;
 }

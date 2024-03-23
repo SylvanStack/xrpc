@@ -1,5 +1,7 @@
 package com.yuanstack.xrpc.core.api;
 
+import com.yuanstack.xrpc.core.meta.InstanceMeta;
+
 import java.util.List;
 
 /**
@@ -10,5 +12,5 @@ public interface Loadbalancer<T> {
 
     T choose(List<T> providers);
 
-    Loadbalancer Default = p -> (p == null || p.isEmpty()) ? null : p.get(1);
+    Loadbalancer<InstanceMeta> Default = p -> (p == null || p.isEmpty()) ? null : p.get(1);
 }
