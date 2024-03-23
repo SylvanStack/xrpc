@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 /**
- * 服务提供者Meta信息
+ * 描述服务提供者映射关系
  *
  * @author Sylvan
  * @date 2024/03/19  22:47

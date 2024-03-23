@@ -1,6 +1,7 @@
 package com.yuanstack.xrpc.core.api;
 
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
+import com.yuanstack.xrpc.core.meta.ServiceMeta;
 import com.yuanstack.xrpc.core.registry.ChangeListener;
 
 import java.util.List;
@@ -17,14 +18,14 @@ public interface RegistryCenter {
 
 
     // provider侧
-    void register(String service, InstanceMeta instance);
+    void register(ServiceMeta service, InstanceMeta instance);
 
-    void unregister(String service, InstanceMeta instance);
+    void unregister(ServiceMeta service, InstanceMeta instance);
 
     // consumer侧
-    List<InstanceMeta> fetchAll(String service);
+    List<InstanceMeta> fetchAll(ServiceMeta service);
 
-    void subscribe(String service, ChangeListener changeListener);
+    void subscribe(ServiceMeta service, ChangeListener changeListener);
 
     void heartbeat();
 
@@ -47,22 +48,22 @@ public interface RegistryCenter {
         }
 
         @Override
-        public void register(String service, InstanceMeta instance) {
+        public void register(ServiceMeta service, InstanceMeta instance) {
 
         }
 
         @Override
-        public void unregister(String service, InstanceMeta instance) {
+        public void unregister(ServiceMeta service, InstanceMeta instance) {
 
         }
 
         @Override
-        public List<InstanceMeta> fetchAll(String service) {
+        public List<InstanceMeta> fetchAll(ServiceMeta service) {
             return providers;
         }
 
         @Override
-        public void subscribe(String service, ChangeListener changeListener) {
+        public void subscribe(ServiceMeta service, ChangeListener changeListener) {
 
         }
 

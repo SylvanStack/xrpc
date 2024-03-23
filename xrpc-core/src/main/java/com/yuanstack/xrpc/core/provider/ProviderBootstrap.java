@@ -4,6 +4,7 @@ import com.yuanstack.xrpc.core.annotation.XProvider;
 import com.yuanstack.xrpc.core.api.RegistryCenter;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.meta.ProviderMeta;
+import com.yuanstack.xrpc.core.meta.ServiceMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -34,15 +35,22 @@ public class ProviderBootstrap implements ApplicationContextAware {
     private MultiValueMap<String, ProviderMeta> skeleton = new LinkedMultiValueMap<>();
 
     private InstanceMeta instance;
+    private RegistryCenter rc;
 
     @Value("${server.port}")
     private String port;
+    @Value("${app.id}")
+    private String app;
+    @Value("${app.namespace}")
+    private String namespace;
+    @Value("${app.env}")
+    private String env;
 
     @PostConstruct
     public void init() {
+        rc = applicationContext.getBean(RegistryCenter.class);
         Map<String, Object> providers = applicationContext.getBeansWithAnnotation(XProvider.class);
         providers.values().forEach(this::genInterface);
-
     }
 
     @SneakyThrows
@@ -58,34 +66,42 @@ public class ProviderBootstrap implements ApplicationContextAware {
     }
 
     private void registerService(String service) {
-        RegistryCenter rc = applicationContext.getBean(RegistryCenter.class);
-        rc.register(service, instance);
+        ServiceMeta serviceMeta = ServiceMeta.builder()
+                .app(app)
+                .namespace(namespace)
+                .env(env)
+                .name(service).build();
+        rc.register(serviceMeta, instance);
     }
 
     private void unregisterService(String service) {
-        RegistryCenter rc = applicationContext.getBean(RegistryCenter.class);
-        rc.register(service, instance);
+        ServiceMeta serviceMeta = ServiceMeta.builder()
+                .app(app)
+                .namespace(namespace)
+                .env(env)
+                .name(service).build();
+        rc.register(serviceMeta, instance);
     }
 
-    private void genInterface(Object x) {
-        Arrays.stream(x.getClass().getInterfaces()).forEach(anInterface -> {
+    private void genInterface(Object impl) {
+        Arrays.stream(impl.getClass().getInterfaces()).forEach(anInterface -> {
             Method[] methods = anInterface.getMethods();
             for (Method method : methods) {
                 if (MethodUtils.isObjectMethod(method)) {
                     continue;
                 }
 
-                createProvider(anInterface, x, method);
+                createProvider(anInterface, impl, method);
             }
         });
     }
 
-    private void createProvider(Class<?> anInterface, Object x, Method method) {
+    private void createProvider(Class<?> service, Object impl, Method method) {
         ProviderMeta meta = new ProviderMeta();
         meta.setMethod(method);
         meta.setMethodSign(MethodUtils.generateMethodSign(method));
-        meta.setServiceImpl(x);
+        meta.setServiceImpl(impl);
         System.out.println("create provider :" + meta);
-        skeleton.add(anInterface.getCanonicalName(), meta);
+        skeleton.add(service.getCanonicalName(), meta);
     }
 }

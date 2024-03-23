@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import java.util.Map;
 
 /**
+ * 描述服务实例元数据
+ *
  * @author Sylvan
  * @date 2024/03/23  18:44
  */

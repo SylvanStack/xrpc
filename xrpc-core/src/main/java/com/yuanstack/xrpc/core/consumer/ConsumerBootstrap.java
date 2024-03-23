@@ -6,8 +6,10 @@ import com.yuanstack.xrpc.core.api.RegistryCenter;
 import com.yuanstack.xrpc.core.api.Router;
 import com.yuanstack.xrpc.core.api.RpcContext;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
+import com.yuanstack.xrpc.core.meta.ServiceMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
@@ -32,10 +34,16 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
     private Environment environment;
 
     private Map<String, Object> stub = new HashMap<>();
+    @Value("${app.id}")
+    private String app;
+    @Value("${app.namespace}")
+    private String namespace;
+    @Value("${app.env}")
+    private String env;
 
     public void start() {
-        Router router = applicationContext.getBean(Router.class);
-        Loadbalancer loadbalancer = applicationContext.getBean(Loadbalancer.class);
+        Router<InstanceMeta> router = applicationContext.getBean(Router.class);
+        Loadbalancer<InstanceMeta> loadbalancer = applicationContext.getBean(Loadbalancer.class);
 
         RpcContext rpcContext = new RpcContext();
         rpcContext.setRouter(router);
@@ -70,9 +78,14 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
 
     private Object createConsumerFromRegistry(Class<?> service, RpcContext context, RegistryCenter rc) {
         String serviceName = service.getCanonicalName();
-        List<InstanceMeta> providers = rc.fetchAll(serviceName);
+        ServiceMeta serviceMeta = ServiceMeta.builder()
+                .app(app)
+                .namespace(namespace)
+                .env(env)
+                .name(serviceName).build();
+        List<InstanceMeta> providers = rc.fetchAll(serviceMeta);
 
-        rc.subscribe(serviceName, event -> {
+        rc.subscribe(serviceMeta, event -> {
             providers.clear();
             providers.addAll(event.getData());
         });

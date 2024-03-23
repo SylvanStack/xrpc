@@ -1,2 +1,9 @@
 server:
   port: 8081
+xrpc:
+  zkServers: localhost:2181
+  zkRoot: xrpc
+app:
+  id: app1
+  namespace: public
+  env: dev

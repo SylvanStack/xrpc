@@ -4,7 +4,8 @@ import com.yuanstack.xrpc.core.api.Loadbalancer;
 import com.yuanstack.xrpc.core.api.RegistryCenter;
 import com.yuanstack.xrpc.core.api.Router;
 import com.yuanstack.xrpc.core.cluster.RoundRibonLoadbalancer;
-import com.yuanstack.xrpc.core.registry.ZkRegistryCenter;
+import com.yuanstack.xrpc.core.meta.InstanceMeta;
+import com.yuanstack.xrpc.core.registry.zk.ZkRegistryCenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
@@ -37,14 +38,14 @@ public class ConsumerConfig {
     }
 
     @Bean
-    public Loadbalancer loadbalancer() {
+    public Loadbalancer<InstanceMeta> loadbalancer() {
         //return Loadbalancer.Default;
         //return new RandomLoadbalancer();
-        return new RoundRibonLoadbalancer();
+        return new RoundRibonLoadbalancer<>();
     }
 
     @Bean
-    public Router router() {
+    public Router<InstanceMeta> router() {
         return Router.Default;
     }
 
