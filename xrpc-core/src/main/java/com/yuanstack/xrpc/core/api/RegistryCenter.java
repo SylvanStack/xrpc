@@ -1,5 +1,7 @@
 package com.yuanstack.xrpc.core.api;
 
+import com.yuanstack.xrpc.core.registry.ChangeListener;
+
 import java.util.List;
 
 /**
@@ -21,7 +23,9 @@ public interface RegistryCenter {
     // consumer侧
     List<String> fetchAll(String service);
 
-    void subscribe();
+    void subscribe(String service, ChangeListener changeListener);
+
+    void heartbeat();
 
     class StaticRegistryCenter implements RegistryCenter {
 
@@ -57,7 +61,12 @@ public interface RegistryCenter {
         }
 
         @Override
-        public void subscribe() {
+        public void subscribe(String service, ChangeListener changeListener) {
+
+        }
+
+        @Override
+        public void heartbeat() {
 
         }
     }
