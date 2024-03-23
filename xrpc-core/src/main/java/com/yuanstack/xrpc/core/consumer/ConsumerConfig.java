@@ -1,10 +1,12 @@
 package com.yuanstack.xrpc.core.consumer;
 
 import com.yuanstack.xrpc.core.api.Loadbalancer;
+import com.yuanstack.xrpc.core.api.RegistryCenter;
 import com.yuanstack.xrpc.core.api.Router;
-import com.yuanstack.xrpc.core.cluster.RandomLoadbalancer;
 import com.yuanstack.xrpc.core.cluster.RoundRibonLoadbalancer;
+import com.yuanstack.xrpc.core.registry.ZkRegistryCenter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,9 @@ import org.springframework.core.annotation.Order;
  */
 @Configuration
 public class ConsumerConfig {
+
+    @Value("${xrpc.providers}")
+    String servers;
 
     @Bean
     ConsumerBootstrap consumerBootstrap() {
@@ -41,6 +46,11 @@ public class ConsumerConfig {
     @Bean
     public Router router() {
         return Router.Default;
+    }
+
+    @Bean(initMethod = "start", destroyMethod = "stop")
+    public RegistryCenter consumerRegistryCenter() {
+        return new ZkRegistryCenter();
     }
 
 }
