@@ -7,7 +7,7 @@ import java.util.List;
  * @date 2024/03/21  23:20
  */
 public interface RegistryCenter {
-    // 注册中心
+    // 注册中心 Provider & Consumer 侧都需要
     void start();
 
     void stop();
