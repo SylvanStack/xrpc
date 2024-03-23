@@ -5,6 +5,7 @@ import com.yuanstack.xrpc.core.api.Loadbalancer;
 import com.yuanstack.xrpc.core.api.RegistryCenter;
 import com.yuanstack.xrpc.core.api.Router;
 import com.yuanstack.xrpc.core.api.RpcContext;
+import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
 import lombok.Data;
 import org.springframework.context.ApplicationContext;
@@ -14,8 +15,9 @@ import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 消费端启动类
@@ -32,8 +34,8 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
     private Map<String, Object> stub = new HashMap<>();
 
     public void start() {
-        Router<?> router = applicationContext.getBean(Router.class);
-        Loadbalancer<?> loadbalancer = applicationContext.getBean(Loadbalancer.class);
+        Router router = applicationContext.getBean(Router.class);
+        Loadbalancer loadbalancer = applicationContext.getBean(Loadbalancer.class);
 
         RpcContext rpcContext = new RpcContext();
         rpcContext.setRouter(router);
@@ -68,26 +70,17 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
 
     private Object createConsumerFromRegistry(Class<?> service, RpcContext context, RegistryCenter rc) {
         String serviceName = service.getCanonicalName();
-        List<String> providers = mapUrls(rc.fetchAll(serviceName));
+        List<InstanceMeta> providers = rc.fetchAll(serviceName);
 
         rc.subscribe(serviceName, event -> {
             providers.clear();
-            providers.addAll(mapUrls(event.getData()));
+            providers.addAll(event.getData());
         });
         return createConsumer(service, context, providers);
     }
 
-    private List<String> mapUrls(List<String> nodes) {
-        if (nodes == null || nodes.isEmpty()) {
-            return Collections.emptyList();
-        }
 
-        return nodes.stream()
-                .map(i -> "http://" + i.replace("_", ":"))
-                .collect(Collectors.toList());
-    }
-
-    private Object createConsumer(Class<?> service, RpcContext rpcContext, List<String> providers) {
+    private Object createConsumer(Class<?> service, RpcContext rpcContext, List<InstanceMeta> providers) {
         return Proxy.newProxyInstance(service.getClassLoader(),
                 new Class[]{service},
                 new XInvocationHandler(service, rpcContext, providers));

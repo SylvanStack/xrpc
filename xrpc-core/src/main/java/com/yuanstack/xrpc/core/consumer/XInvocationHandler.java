@@ -4,6 +4,7 @@ import com.yuanstack.xrpc.core.api.RpcContext;
 import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
 import com.yuanstack.xrpc.core.consumer.http.OkHttpInvoker;
+import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
 import com.yuanstack.xrpc.core.util.ResponseUtils;
 
@@ -18,11 +19,11 @@ import java.util.List;
 public class XInvocationHandler implements InvocationHandler {
     Class<?> service;
     RpcContext rpcContext;
-    List<String> providers;
+    List<InstanceMeta> providers;
 
     HttpInvoker httpInvoker = new OkHttpInvoker();
 
-    public XInvocationHandler(Class<?> service, RpcContext rpcContext, List<String> providers) {
+    public XInvocationHandler(Class<?> service, RpcContext rpcContext, List<InstanceMeta> providers) {
         this.service = service;
         this.rpcContext = rpcContext;
         this.providers = providers;
@@ -39,12 +40,11 @@ public class XInvocationHandler implements InvocationHandler {
         request.setMethodSign(MethodUtils.generateMethodSign(method));
         request.setArgs(args);
 
-        List<String> urls = rpcContext.getRouter().route(providers);
-        String url = (String) rpcContext.getLoadbalancer().choose(urls);
+        List<InstanceMeta> nodes = rpcContext.getRouter().route(providers);
+        InstanceMeta instance = rpcContext.getLoadbalancer().choose(nodes);
 
-        System.out.println("loadbalancer.choose(urls) ==> " + url);
-
-        RpcResponse<?> rpcResponse = httpInvoker.post(request, url);
+        System.out.println("loadbalancer.choose(urls) ==> " + instance);
+        RpcResponse<?> rpcResponse = httpInvoker.post(request, instance.toUrl());
         if (!rpcResponse.getStatus()) {
             throw rpcResponse.getEx();
         }

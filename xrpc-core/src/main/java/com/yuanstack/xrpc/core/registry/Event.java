@@ -1,5 +1,6 @@
 package com.yuanstack.xrpc.core.registry;
 
+import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,5 +15,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Event {
-    List<String> data;
+    List<InstanceMeta> data;
 }

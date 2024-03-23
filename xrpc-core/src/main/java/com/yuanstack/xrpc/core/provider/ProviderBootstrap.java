@@ -2,6 +2,7 @@ package com.yuanstack.xrpc.core.provider;
 
 import com.yuanstack.xrpc.core.annotation.XProvider;
 import com.yuanstack.xrpc.core.api.RegistryCenter;
+import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.meta.ProviderMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
 import jakarta.annotation.PostConstruct;
@@ -32,7 +33,7 @@ public class ProviderBootstrap implements ApplicationContextAware {
 
     private MultiValueMap<String, ProviderMeta> skeleton = new LinkedMultiValueMap<>();
 
-    private String instance;
+    private InstanceMeta instance;
 
     @Value("${server.port}")
     private String port;
@@ -46,8 +47,8 @@ public class ProviderBootstrap implements ApplicationContextAware {
 
     @SneakyThrows
     public void start() {
-        String ip = InetAddress.getLocalHost().getHostAddress();
-        instance = ip + "_" + port;
+        String host = InetAddress.getLocalHost().getHostAddress();
+        instance = InstanceMeta.http(host, Integer.valueOf(port));
         skeleton.keySet().forEach(this::registerService);
     }
 
