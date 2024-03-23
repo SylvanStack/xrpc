@@ -33,4 +33,9 @@ public class ProviderConfig {
     public RegistryCenter providerRegistryCenter() {
         return new ZkRegistryCenter();
     }
+
+    @Bean
+    public ProviderInvoker providerInvoker(@Autowired ProviderBootstrap providerBootstrap) {
+        return new ProviderInvoker(providerBootstrap);
+    }
 }

@@ -5,6 +5,7 @@ import com.yuanstack.xrpc.core.api.Loadbalancer;
 import com.yuanstack.xrpc.core.api.RegistryCenter;
 import com.yuanstack.xrpc.core.api.Router;
 import com.yuanstack.xrpc.core.api.RpcContext;
+import com.yuanstack.xrpc.core.util.MethodUtils;
 import lombok.Data;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -40,7 +41,7 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
         String[] beanDefinitionNames = applicationContext.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
             Object bean = applicationContext.getBean(beanDefinitionName);
-            List<Field> fields = findAnnotatedField(bean.getClass());
+            List<Field> fields = MethodUtils.findAnnotatedField(bean.getClass(), XConsumer.class);
 
             fields.forEach(field -> {
                 try {
@@ -87,20 +88,5 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
         return Proxy.newProxyInstance(service.getClassLoader(),
                 new Class[]{service},
                 new XInvocationHandler(service, rpcContext, providers));
-    }
-
-    private List<Field> findAnnotatedField(Class<?> aClass) {
-        List<Field> result = new ArrayList<>();
-        while (aClass != null) {
-            Field[] fields = aClass.getDeclaredFields();
-            for (Field field : fields) {
-                if (field.isAnnotationPresent(XConsumer.class)) {
-                    result.add(field);
-                }
-            }
-
-            aClass = aClass.getSuperclass();
-        }
-        return result;
     }
 }
