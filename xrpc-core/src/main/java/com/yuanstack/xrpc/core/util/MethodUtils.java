@@ -1,6 +1,6 @@
 package com.yuanstack.xrpc.core.util;
 
-import com.yuanstack.xrpc.core.annotation.XConsumer;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -14,6 +14,7 @@ import java.util.List;
  * @author Sylvan
  * @date 2024/03/19  22:10
  */
+@Slf4j
 public class MethodUtils {
 
     /**
@@ -23,16 +24,13 @@ public class MethodUtils {
      * @return true 是，false 否
      */
     public static boolean isObjectMethod(String methodName) {
-        if ("toSting".equals(methodName) ||
+        return "toSting".equals(methodName) ||
                 "hashCode".equals(methodName) ||
                 "notifyAll".equals(methodName) ||
                 "equals".equals(methodName) ||
                 "wait".equals(methodName) ||
                 "getClass".equals(methodName) ||
-                "notify".equals(methodName)) {
-            return true;
-        }
-        return false;
+                "notify".equals(methodName);
     }
 
     public static boolean isObjectMethod(Method method) {
@@ -72,7 +70,7 @@ public class MethodUtils {
 
     public static void main(String[] args) {
         for (Method declaredMethod : MethodUtils.class.getDeclaredMethods()) {
-            System.out.println(generateMethodSign(declaredMethod));
+            log.info(generateMethodSign(declaredMethod));
         }
     }
 }
