@@ -4,6 +4,7 @@ import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
 import com.yuanstack.xrpc.core.provider.ProviderConfig;
 import com.yuanstack.xrpc.core.provider.ProviderInvoker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @Import({ProviderConfig.class})
+@Slf4j
 public class XrpcDemoProviderApplication {
 
     public static void main(String[] args) {
@@ -32,7 +34,7 @@ public class XrpcDemoProviderApplication {
             request.setArgs(new Object[]{100});
 
             RpcResponse<Object> rpcResponse = providerInvoker.invoke(request);
-            System.out.println("return:" + rpcResponse.getData());
+            log.info("return:" + rpcResponse.getData());
 
             // test 2 parameters method
             RpcRequest request2 = new RpcRequest();
@@ -41,7 +43,7 @@ public class XrpcDemoProviderApplication {
             request2.setArgs(new Object[]{101, "Stack"});
 
             RpcResponse<Object> rpcResponse2 = providerInvoker.invoke(request2);
-            System.out.println("return:" + rpcResponse2.getData());
+            log.info("return:" + rpcResponse2.getData());
         };
     }
 }

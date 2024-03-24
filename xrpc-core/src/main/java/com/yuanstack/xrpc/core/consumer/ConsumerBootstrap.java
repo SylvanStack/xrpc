@@ -9,6 +9,7 @@ import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.meta.ServiceMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -28,6 +29,7 @@ import java.util.Map;
  * @date 2024/03/10  13:20
  */
 @Data
+@Slf4j
 public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAware {
 
     private ApplicationContext applicationContext;
@@ -57,7 +59,7 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
 
             fields.forEach(field -> {
                 try {
-                    System.out.println("consumer name ====>" + field.getName());
+                    log.info("consumer name ====>" + field.getName());
                     Class<?> service = field.getType();
                     String serviceName = service.getCanonicalName();
 

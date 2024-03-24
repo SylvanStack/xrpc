@@ -7,6 +7,7 @@ import com.yuanstack.xrpc.core.consumer.http.OkHttpInvoker;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
 import com.yuanstack.xrpc.core.util.ResponseUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -16,6 +17,7 @@ import java.util.List;
  * @author Sylvan
  * @date 2024/03/11  22:27
  */
+@Slf4j
 public class XInvocationHandler implements InvocationHandler {
     Class<?> service;
     RpcContext rpcContext;
@@ -43,7 +45,7 @@ public class XInvocationHandler implements InvocationHandler {
         List<InstanceMeta> nodes = rpcContext.getRouter().route(providers);
         InstanceMeta instance = rpcContext.getLoadbalancer().choose(nodes);
 
-        System.out.println("loadbalancer.choose(urls) ==> " + instance);
+        log.info("loadbalancer.choose(urls) ==> " + instance);
         RpcResponse<?> rpcResponse = httpInvoker.post(request, instance.toUrl());
         if (!rpcResponse.getStatus()) {
             throw rpcResponse.getEx();

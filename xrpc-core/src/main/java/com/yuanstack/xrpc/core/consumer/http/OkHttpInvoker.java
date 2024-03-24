@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
 import com.yuanstack.xrpc.core.consumer.HttpInvoker;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeUnit;
  * @author Sylvan
  * @date 2024/03/23  18:29
  */
+@Slf4j
 public class OkHttpInvoker implements HttpInvoker {
     final static MediaType JSON_TYPE = MediaType.get("application/json; charset=utf-8");
     private final OkHttpClient client;
@@ -30,8 +32,8 @@ public class OkHttpInvoker implements HttpInvoker {
     @Override
     public RpcResponse<?> post(RpcRequest rpcRequest, String url) {
         String reqJson = JSON.toJSONString(rpcRequest);
-        System.out.println("reqJson :" + reqJson);
-        System.out.println("url :" + url);
+        log.info("reqJson :" + reqJson);
+        log.info("url :" + url);
 
         Request request = new Request.Builder()
                 .url(url)
@@ -40,9 +42,9 @@ public class OkHttpInvoker implements HttpInvoker {
 
         try {
             String respJson = Objects.requireNonNull(client.newCall(request).execute().body()).string();
-            System.out.println("respJson :" + respJson);
+            log.info("respJson :" + respJson);
             RpcResponse<Object> rpcResponse = JSON.parseObject(respJson, RpcResponse.class);
-            System.out.println(rpcResponse);
+            log.info(String.valueOf(rpcResponse));
             return rpcResponse;
         } catch (IOException e) {
             throw new RuntimeException(e);

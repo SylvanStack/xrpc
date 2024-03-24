@@ -6,6 +6,7 @@ import com.yuanstack.xrpc.core.api.Router;
 import com.yuanstack.xrpc.core.cluster.RoundRibonLoadbalancer;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.registry.zk.ZkRegistryCenter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
@@ -18,6 +19,7 @@ import org.springframework.core.annotation.Order;
  * @date 2024/03/10  13:22
  */
 @Configuration
+@Slf4j
 public class ConsumerConfig {
 
     @Value("${xrpc.providers}")
@@ -32,7 +34,7 @@ public class ConsumerConfig {
     @Order(Integer.MIN_VALUE)
     public ApplicationRunner consumerBootstrapRunner(@Autowired ConsumerBootstrap consumerBootstrap) {
         return x -> {
-            System.out.println("consumerBootstrapRunner");
+            log.info("consumerBootstrapRunner");
             consumerBootstrap.start();
         };
     }

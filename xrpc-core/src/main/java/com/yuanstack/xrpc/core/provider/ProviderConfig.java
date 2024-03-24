@@ -2,6 +2,7 @@ package com.yuanstack.xrpc.core.provider;
 
 import com.yuanstack.xrpc.core.api.RegistryCenter;
 import com.yuanstack.xrpc.core.registry.zk.ZkRegistryCenter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.core.annotation.Order;
  * @date 2024/03/10  13:22
  */
 @Configuration
+@Slf4j
 public class ProviderConfig {
 
     @Bean
@@ -25,7 +27,7 @@ public class ProviderConfig {
     public ApplicationRunner providerBootstrapRunner(@Autowired ProviderBootstrap providerBootstrap) {
         return x -> {
             providerBootstrap.start();
-            System.out.println("providerBootstrap starting .....");
+            log.info("providerBootstrap starting .....");
         };
     }
 

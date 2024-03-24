@@ -4,6 +4,7 @@ import com.yuanstack.xrpc.core.annotation.XProvider;
 import com.yuanstack.xrpc.demo.api.dto.User;
 import com.yuanstack.xrpc.demo.api.service.UserService;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.Map;
  */
 @Service
 @XProvider
+@Slf4j
 public class UserServiceImpl implements UserService {
     @Resource
     private Environment environment;
@@ -54,8 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long getUserId(Float userId) {
-        System.out.println(userId);
-        ;
+        log.info(String.valueOf(userId));
         return 10L;
     }
 
