@@ -1,5 +1,6 @@
 package com.yuanstack.xrpc.core.consumer;
 
+import com.yuanstack.xrpc.core.api.Filter;
 import com.yuanstack.xrpc.core.api.RpcContext;
 import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
@@ -42,6 +43,14 @@ public class XInvocationHandler implements InvocationHandler {
         request.setMethodSign(MethodUtils.generateMethodSign(method));
         request.setArgs(args);
 
+        for (Filter filter : this.rpcContext.getFilters()) {
+            Object preResult = filter.preFilter(request);
+            if (preResult != null) {
+                log.debug(filter.getClass().getName() + "===> preFilter:" + preResult);
+                return preResult;
+            }
+        }
+
         List<InstanceMeta> nodes = rpcContext.getRouter().route(providers);
         InstanceMeta instance = rpcContext.getLoadbalancer().choose(nodes);
 
@@ -50,7 +59,16 @@ public class XInvocationHandler implements InvocationHandler {
         if (!rpcResponse.getStatus()) {
             throw rpcResponse.getEx();
         }
+        Object result = ResponseUtils.castResponse(method, rpcResponse);
 
-        return ResponseUtils.castResponse(method, rpcResponse);
+        for (Filter filter : this.rpcContext.getFilters()) {
+            Object filterResult = filter.postFilter(request, rpcResponse, result);
+            log.debug(filter.getClass().getName() + "===> filterResult:" + filterResult);
+            if (filterResult != null) {
+                return filterResult;
+            }
+        }
+
+        return result;
     }
 }
