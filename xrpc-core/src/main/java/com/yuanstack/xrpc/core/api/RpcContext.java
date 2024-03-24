@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Data
 public class RpcContext {
-    List<Filter> filters; // todo
+    List<Filter> filters;
 
     Router<InstanceMeta> router;
 

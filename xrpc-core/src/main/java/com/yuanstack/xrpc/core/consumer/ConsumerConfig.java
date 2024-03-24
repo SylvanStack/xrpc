@@ -1,9 +1,11 @@
 package com.yuanstack.xrpc.core.consumer;
 
+import com.yuanstack.xrpc.core.api.Filter;
 import com.yuanstack.xrpc.core.api.Loadbalancer;
 import com.yuanstack.xrpc.core.api.RegistryCenter;
 import com.yuanstack.xrpc.core.api.Router;
 import com.yuanstack.xrpc.core.cluster.RoundRibonLoadbalancer;
+import com.yuanstack.xrpc.core.filter.CacheFilter;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.registry.zk.ZkRegistryCenter;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +51,11 @@ public class ConsumerConfig {
     @Bean
     public Router<InstanceMeta> router() {
         return Router.Default;
+    }
+
+    @Bean
+    public Filter filter() {
+        return new CacheFilter();
     }
 
     @Bean(initMethod = "start", destroyMethod = "stop")

@@ -1,10 +1,7 @@
 package com.yuanstack.xrpc.core.consumer;
 
 import com.yuanstack.xrpc.core.annotation.XConsumer;
-import com.yuanstack.xrpc.core.api.Loadbalancer;
-import com.yuanstack.xrpc.core.api.RegistryCenter;
-import com.yuanstack.xrpc.core.api.Router;
-import com.yuanstack.xrpc.core.api.RpcContext;
+import com.yuanstack.xrpc.core.api.*;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.meta.ServiceMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
@@ -18,9 +15,11 @@ import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 消费端启动类
@@ -46,10 +45,12 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
     public void start() {
         Router<InstanceMeta> router = applicationContext.getBean(Router.class);
         Loadbalancer<InstanceMeta> loadbalancer = applicationContext.getBean(Loadbalancer.class);
+        List<Filter> filters = new ArrayList<>(applicationContext.getBeansOfType(Filter.class).values());
 
         RpcContext rpcContext = new RpcContext();
         rpcContext.setRouter(router);
         rpcContext.setLoadbalancer(loadbalancer);
+        rpcContext.setFilters(filters);
         RegistryCenter registryCenter = applicationContext.getBean(RegistryCenter.class);
 
         String[] beanDefinitionNames = applicationContext.getBeanDefinitionNames();
