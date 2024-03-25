@@ -2,13 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.3</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-
     <groupId>com.yuanstack</groupId>
     <artifactId>xrpc</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -23,23 +16,53 @@
 
     <properties>
         <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+
+        <!--   Spring 相关     -->
+        <sprint.boot.version>3.2.3</sprint.boot.version>
+        <!--  工具类相关       -->
+        <lombok.version>1.18.30</lombok.version>
+        <curator.version>5.1.0</curator.version>
+        <fastjson.version>1.2.83</fastjson.version>
+        <okhttp.version>4.12.0</okhttp.version>
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${sprint.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <optional>true</optional>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-client</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
