@@ -16,6 +16,8 @@ public class MockUtils {
             return 1;
         } else if (type.equals(Long.class) || type.equals(Long.TYPE)) {
             return 10000L;
+        } else if (type.equals(Float.class) || type.equals(Float.TYPE)) {
+            return 5.50F;
         }
 
         if (Number.class.isAssignableFrom(type)) {
