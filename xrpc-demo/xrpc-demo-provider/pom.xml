@@ -10,7 +10,7 @@
 
     <artifactId>xrpc-demo-provider</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>xrpc-demo-api</name>
+    <name>xrpc-demo-provider</name>
     <description>xrpc-demo-provider</description>
     <properties>
         <java.version>17</java.version>
