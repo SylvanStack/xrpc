@@ -2,3 +2,7 @@
 
 POST http://localhost:8090/?userId=100
 
+### 调用超时重试Case
+
+POST http://localhost:8090/timeout?timeout=1000
+

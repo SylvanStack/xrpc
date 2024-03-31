@@ -3,6 +3,7 @@ package com.yuanstack.xrpc.core.api;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,5 +19,5 @@ public class RpcContext {
 
     private Loadbalancer<InstanceMeta> loadbalancer;
 
-    private Map<String, String> parameters;
+    private Map<String, String> parameters = new HashMap<>();
 }

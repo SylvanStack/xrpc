@@ -21,4 +21,9 @@ public class UserController {
     public User findById(@RequestParam("userId") Integer userId) {
         return userService.findById(userId);
     }
+
+    @PostMapping("/timeout")
+    public User findTimeOut(@RequestParam("timeout") Integer timeout) {
+        return userService.findTimeOut(timeout);
+    }
 }
