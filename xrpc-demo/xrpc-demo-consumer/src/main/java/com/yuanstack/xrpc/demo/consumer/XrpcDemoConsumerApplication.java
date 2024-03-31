@@ -2,6 +2,7 @@ package com.yuanstack.xrpc.demo.consumer;
 
 import com.yuanstack.xrpc.core.annotation.XConsumer;
 import com.yuanstack.xrpc.core.consumer.ConsumerConfig;
+import com.yuanstack.xrpc.demo.api.dto.Order;
 import com.yuanstack.xrpc.demo.api.dto.User;
 import com.yuanstack.xrpc.demo.api.service.OrderService;
 import com.yuanstack.xrpc.demo.api.service.UserService;
@@ -52,8 +53,8 @@ public class XrpcDemoConsumerApplication {
             //log.info(order);
 
             // 异常case
-            //Order order404 = orderService.findById(404);
-            //log.info(order404);
+            Order order404 = orderService.findById(404);
+            log.info(String.valueOf(order404));
 
             // 返回基本类型Case
             //int userId = userService.getId(2);

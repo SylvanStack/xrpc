@@ -1,9 +1,6 @@
 package com.yuanstack.xrpc.core.consumer;
 
-import com.yuanstack.xrpc.core.api.Filter;
-import com.yuanstack.xrpc.core.api.RpcContext;
-import com.yuanstack.xrpc.core.api.RpcRequest;
-import com.yuanstack.xrpc.core.api.RpcResponse;
+import com.yuanstack.xrpc.core.api.*;
 import com.yuanstack.xrpc.core.consumer.http.OkHttpInvoker;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
@@ -56,8 +53,13 @@ public class XInvocationHandler implements InvocationHandler {
 
         log.info("loadbalancer.choose(urls) ==> " + instance);
         RpcResponse<?> rpcResponse = httpInvoker.post(request, instance.toUrl());
-        if (!rpcResponse.getStatus()) {
-            throw rpcResponse.getEx();
+        if (rpcResponse.getStatus() == null || !rpcResponse.getStatus()) {
+            Exception exception = rpcResponse.getEx();
+            if (exception instanceof RpcException ex) {
+                throw ex;
+            } else {
+                throw new RpcException(rpcResponse.getEx(), RpcException.UnknownEx);
+            }
         }
         Object result = ResponseUtils.castResponse(method, rpcResponse);
 

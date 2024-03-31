@@ -5,7 +5,7 @@ import com.yuanstack.xrpc.core.api.Loadbalancer;
 import com.yuanstack.xrpc.core.api.RegistryCenter;
 import com.yuanstack.xrpc.core.api.Router;
 import com.yuanstack.xrpc.core.cluster.RoundRibonLoadbalancer;
-import com.yuanstack.xrpc.core.filter.MockFilter;
+import com.yuanstack.xrpc.core.filter.CacheFilter;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.registry.zk.ZkRegistryCenter;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +60,7 @@ public class ConsumerConfig {
 
     @Bean
     public Filter mockFilter() {
-        return new MockFilter();
+        return new CacheFilter();
     }
 
     @Bean(initMethod = "start", destroyMethod = "stop")
