@@ -6,3 +6,9 @@ POST http://localhost:8090/?userId=100
 
 POST http://localhost:8090/timeout?timeout=1000
 
+### 设置超时机器
+
+POST http://localhost:8081/ports?ports=8083
+### 设置超时机器
+POST http://localhost:8082/ports?ports=8083
+

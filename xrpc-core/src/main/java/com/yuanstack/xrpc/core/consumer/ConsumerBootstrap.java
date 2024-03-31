@@ -65,7 +65,7 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
 
             fields.forEach(field -> {
                 try {
-                    log.info("consumer name ====>" + field.getName());
+                    log.info("consumer name " + field.getName());
                     Class<?> service = field.getType();
                     String serviceName = service.getCanonicalName();
 

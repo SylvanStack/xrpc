@@ -3,6 +3,7 @@ package com.yuanstack.xrpc.core.util;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 
@@ -10,6 +11,7 @@ import java.lang.reflect.Field;
  * @author Sylvan
  * @date 2024/03/24  16:24
  */
+@Slf4j
 public class MockUtils {
     public static Object mock(Class<?> type) {
         if (type.equals(Integer.class) || type.equals(Integer.TYPE)) {
@@ -45,7 +47,7 @@ public class MockUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println(mock(UserDTO.class));
+        log.info("result is {}", mock(UserDTO.class));
     }
 
     @Getter

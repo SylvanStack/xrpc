@@ -39,12 +39,12 @@ public class ZkRegistryCenter implements RegistryCenter {
                 .retryPolicy(retryPolicy)
                 .build();
         client.start();
-        log.info("====> Zk client started to servers [" + zkServers + "/" + zkRoot + "] .");
+        log.info(" Zk client started to servers [" + zkServers + "/" + zkRoot + "] .");
     }
 
     @Override
     public void stop() {
-        log.info("====> Zk client stopped.");
+        log.info(" Zk client stopped.");
         client.close();
     }
 
@@ -63,7 +63,7 @@ public class ZkRegistryCenter implements RegistryCenter {
             if (client.checkExists().forPath(instancePath) == null) {
                 client.create().withMode(CreateMode.EPHEMERAL).forPath(instancePath, "provider".getBytes());
             }
-            log.info("====> register to Zk：" + instancePath);
+            log.info(" register to Zk：" + instancePath);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -81,7 +81,7 @@ public class ZkRegistryCenter implements RegistryCenter {
 
             // 创建实例的临时节点
             String instancePath = servicePath + "/" + instance.toPath();
-            log.info("====> unregister to Zk：" + instancePath);
+            log.info(" unregister to Zk：" + instancePath);
             client.delete().quietly().forPath(instancePath);
         } catch (Exception e) {
             throw new RuntimeException(e);

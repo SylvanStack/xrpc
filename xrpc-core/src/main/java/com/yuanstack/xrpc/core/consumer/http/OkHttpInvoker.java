@@ -7,7 +7,6 @@ import com.yuanstack.xrpc.core.consumer.HttpInvoker;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
-import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 

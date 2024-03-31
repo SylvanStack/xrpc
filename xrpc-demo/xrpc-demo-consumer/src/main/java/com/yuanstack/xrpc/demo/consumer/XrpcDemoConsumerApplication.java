@@ -13,6 +13,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
+import java.util.Arrays;
+
 @SpringBootApplication
 @Slf4j
 @Import({ConsumerConfig.class})
@@ -46,32 +48,32 @@ public class XrpcDemoConsumerApplication {
         log.info(String.valueOf(user));
 
         // 类型转换
-        //log.info(userService.getUserId(1L));
-        //log.info(userService.getUserId(new User(102, "stack")));
-        //log.info(userService.getUserId(10F));
-        //log.info(Arrays.toString(userService.getUserIds(new int[]{1, 2})));
+        log.info(String.valueOf(userService.getUserId(1L)));
+        log.info(String.valueOf(userService.getUserId(new User(102, "stack"))));
+        log.info(String.valueOf(userService.getUserId(10F)));
+        log.info(Arrays.toString(userService.getUserIds(new int[]{1, 2})));
 
         // 重载Case
-        //User user2 = userService.findById(2, "Stack");
-        //log.info(user2);
+        User userService2 = userService.findById(2, "Stack");
+        log.info(String.valueOf(userService2));
 
         // 重载Case
-        //log.info(userService.getName(2));
-        //log.info(userService.getName("Stack"));
-        //
-        //Order order = orderService.findById(2);
-        //log.info(order);
+        log.info(userService.getName(2));
+        log.info(userService.getName("Stack"));
+
+        Order order = orderService.findById(2);
+        log.info(String.valueOf(order));
 
         // 异常case
-        //Order order404 = orderService.findById(404);
-        //log.info(String.valueOf(order404));
+        Order order404 = orderService.findById(404);
+        log.info(String.valueOf(order404));
 
         // 返回基本类型Case
-        //int userId = userService.getId(2);
-        //log.info(userId);
+        int userId = userService.getId(2);
+        log.info(String.valueOf(userId));
 
         // Object 方法调用
-        //log.info(orderService.toString());
+        log.info(orderService.toString());
     }
 
 }

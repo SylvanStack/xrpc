@@ -1,6 +1,7 @@
 package com.yuanstack.xrpc.core.test;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.test.InstanceSpec;
 import org.apache.curator.test.TestingCluster;
 import org.apache.curator.utils.CloseableUtils;
@@ -9,6 +10,7 @@ import org.apache.curator.utils.CloseableUtils;
  * @author Sylvan
  * @date 2024/03/25  22:50
  */
+@Slf4j
 public class TestZookeeperServer {
     TestingCluster cluster;
 
@@ -18,17 +20,17 @@ public class TestZookeeperServer {
                 null, 2182, -1, -1,
                 true, -1, -1, 1);
         cluster = new TestingCluster(instanceSpec);
-        System.out.println("TestingZooKeeperServer starting ...");
+        log.debug("TestingZooKeeperServer starting ...");
         cluster.start();
         cluster.getServers().forEach(s -> System.out.println(s.getInstanceSpec()));
-        System.out.println("TestingZooKeeperServer started.");
+        log.debug("TestingZooKeeperServer started.");
     }
 
     @SneakyThrows
     public void stop() {
-        System.out.println("TestingZooKeeperServer stopping ...");
+        log.debug("TestingZooKeeperServer stopping ...");
         cluster.stop();
         CloseableUtils.closeQuietly(cluster);
-        System.out.println("TestingZooKeeperServer stopped.");
+        log.debug("TestingZooKeeperServer stopped.");
     }
 }
