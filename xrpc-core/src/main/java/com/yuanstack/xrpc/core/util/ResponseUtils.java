@@ -2,6 +2,7 @@ package com.yuanstack.xrpc.core.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yuanstack.xrpc.core.api.RpcException;
 import com.yuanstack.xrpc.core.api.RpcResponse;
 
 import java.lang.reflect.Array;
@@ -13,6 +14,15 @@ import java.lang.reflect.Method;
  */
 public class ResponseUtils {
     public static Object castResponse(Method method, RpcResponse rpcResponse) {
+        if (rpcResponse.getStatus() == null || !rpcResponse.getStatus()) {
+            Exception exception = rpcResponse.getEx();
+            if (exception instanceof RpcException ex) {
+                throw ex;
+            } else {
+                throw new RpcException(rpcResponse.getEx(), RpcException.UnknownEx);
+            }
+        }
+
         if (rpcResponse.getData() instanceof JSONObject jsonResult) {
             return jsonResult.toJavaObject(method.getReturnType());
         } else if (rpcResponse.getData() instanceof JSONArray array) {

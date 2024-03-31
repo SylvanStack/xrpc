@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -85,18 +86,26 @@ public class UserServiceImpl implements UserService {
         return userId;
     }
 
+    String ports = "8081";
+
     @Override
     public User findTimeOut(int timeout) {
         String property = environment.getProperty("server.port");
-        if ("8081".equals(property)) {
+        if (Arrays.asList(ports.split(",")).contains(property)) {
             try {
                 Thread.sleep(timeout);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        
-        return new User(timeout,
-                "Sylvan-" + timeout);
+
+        return new User(Integer.parseInt(property == null ? "1000" : property),
+                "Sylvan-" + environment.getProperty("server.port"));
+    }
+
+
+    public String setPorts(String ports) {
+        this.ports = ports;
+        return this.ports;
     }
 }

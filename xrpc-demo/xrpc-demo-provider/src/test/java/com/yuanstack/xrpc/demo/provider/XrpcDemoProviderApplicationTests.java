@@ -1,6 +1,7 @@
 package com.yuanstack.xrpc.demo.provider;
 
 import com.yuanstack.xrpc.core.test.TestZookeeperServer;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
+@Slf4j
 @TestPropertySource(locations = "classpath:application.yml")
 class XrpcDemoProviderApplicationTests {
 
@@ -22,7 +24,7 @@ class XrpcDemoProviderApplicationTests {
 
     @Test
     void contextLoads() {
-        System.out.println("Unit tests");
+        log.info("Unit tests");
     }
 
     @AfterAll

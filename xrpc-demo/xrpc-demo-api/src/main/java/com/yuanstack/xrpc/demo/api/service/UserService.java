@@ -89,4 +89,12 @@ public interface UserService {
      * @return 用户信息
      */
     User findTimeOut(int timeout);
+
+    /**
+     * 设置Ports
+     *
+     * @param ports 端口号
+     * @return 端口号集合
+     */
+    String setPorts(String ports);
 }
