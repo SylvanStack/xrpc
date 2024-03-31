@@ -1,5 +1,6 @@
 package com.yuanstack.xrpc.core.provider;
 
+import com.yuanstack.xrpc.core.api.RpcException;
 import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
 import com.yuanstack.xrpc.core.meta.ProviderMeta;
@@ -42,9 +43,9 @@ public class ProviderInvoker {
             rpcResponse.setData(result);
             rpcResponse.setStatus(true);
         } catch (InvocationTargetException e) {
-            rpcResponse.setEx(new RuntimeException(e.getTargetException().getMessage()));
+            rpcResponse.setEx(new RpcException(e.getTargetException().getMessage()));
         } catch (IllegalAccessException e) {
-            rpcResponse.setEx(new RuntimeException(e.getMessage()));
+            rpcResponse.setEx(new RpcException(e.getMessage()));
         }
         return rpcResponse;
     }
