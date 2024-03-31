@@ -81,4 +81,12 @@ public interface UserService {
      * @return int
      */
     int getId(Integer userId);
+
+    /**
+     * time out case
+     *
+     * @param timeout 查询占用时间
+     * @return 用户信息
+     */
+    User findTimeOut(int timeout);
 }

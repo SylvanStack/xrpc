@@ -1,4 +1,4 @@
-package com.yuanstack.xrpc.core.filter;
+package com.yuanstack.xrpc.core.util;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -60,7 +60,7 @@ public class ConsumerConfig {
 
     @Bean
     public Filter mockFilter() {
-        return new CacheFilter();
+        return Filter.Default;
     }
 
     @Bean(initMethod = "start", destroyMethod = "stop")
