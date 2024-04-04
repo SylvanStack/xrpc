@@ -44,6 +44,8 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
     private Integer retries;
     @Value("${app.timeout}")
     private Integer timeout;
+    @Value("${app.grayRatio}")
+    private Integer grayRatio;
 
     public void start() {
         Router<InstanceMeta> router = applicationContext.getBean(Router.class);
@@ -56,6 +58,7 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
         rpcContext.setFilters(filters);
         rpcContext.getParameters().put("app.retries", String.valueOf(retries));
         rpcContext.getParameters().put("app.timeout", String.valueOf(timeout));
+        rpcContext.getParameters().put("app.grayRatio", String.valueOf(grayRatio));
         RegistryCenter registryCenter = applicationContext.getBean(RegistryCenter.class);
 
         String[] beanDefinitionNames = applicationContext.getBeanDefinitionNames();
