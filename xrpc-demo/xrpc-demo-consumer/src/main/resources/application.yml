@@ -10,6 +10,7 @@ app:
   env: dev
   retries: 2
   timeout: 1000
+  grayRatio: 10
 logging:
   level:
     root: info

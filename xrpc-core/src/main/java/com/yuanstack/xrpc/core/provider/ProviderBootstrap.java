@@ -47,6 +47,8 @@ public class ProviderBootstrap implements ApplicationContextAware {
     private String namespace;
     @Value("${app.env}")
     private String env;
+    @Value("#{${app.metas}}")
+    private Map<String, String> metas;
 
     @PostConstruct
     public void init() {
@@ -58,8 +60,9 @@ public class ProviderBootstrap implements ApplicationContextAware {
     @SneakyThrows
     public void start() {
         String host = InetAddress.getLocalHost().getHostAddress();
-        instance = InstanceMeta.http(host, Integer.valueOf(port));
-        skeleton.keySet().forEach(this::registerService);
+        this.instance = InstanceMeta.http(host, Integer.valueOf(port));
+        this.instance.getParameters().putAll(this.metas);
+        this.skeleton.keySet().forEach(this::registerService);
     }
 
     @PreDestroy

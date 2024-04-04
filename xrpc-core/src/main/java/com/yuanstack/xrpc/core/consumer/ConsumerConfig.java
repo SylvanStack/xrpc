@@ -4,8 +4,8 @@ import com.yuanstack.xrpc.core.api.Filter;
 import com.yuanstack.xrpc.core.api.Loadbalancer;
 import com.yuanstack.xrpc.core.api.RegistryCenter;
 import com.yuanstack.xrpc.core.api.Router;
+import com.yuanstack.xrpc.core.cluster.GrayRouter;
 import com.yuanstack.xrpc.core.cluster.RoundRibonLoadbalancer;
-import com.yuanstack.xrpc.core.filter.CacheFilter;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.registry.zk.ZkRegistryCenter;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +26,8 @@ public class ConsumerConfig {
 
     @Value("${xrpc.providers}")
     String servers;
+    @Value("${app.grayRatio}")
+    private Integer grayRatio;
 
     @Bean
     ConsumerBootstrap consumerBootstrap() {
@@ -50,7 +52,7 @@ public class ConsumerConfig {
 
     @Bean
     public Router<InstanceMeta> router() {
-        return Router.Default;
+        return new GrayRouter(grayRatio);
     }
 
     //@Bean
