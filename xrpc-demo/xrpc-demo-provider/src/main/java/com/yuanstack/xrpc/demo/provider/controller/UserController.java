@@ -4,11 +4,8 @@ import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
 import com.yuanstack.xrpc.core.provider.ProviderInvoker;
 import com.yuanstack.xrpc.demo.api.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Sylvan
@@ -17,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-    @Autowired
+    @Resource
     private ProviderInvoker providerInvoker;
-    @Autowired
+    @Resource
     private UserService userService;
 
     //  使用HTTP + JSON 来实现序列化和通信
@@ -32,5 +29,10 @@ public class UserController {
     @PostMapping("/ports")
     public String setPorts(@RequestParam("ports") String ports) {
         return userService.setPorts(ports);
+    }
+
+    @GetMapping("/health/check")
+    public String checkHealth() {
+        return "ok";
     }
 }
