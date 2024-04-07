@@ -38,38 +38,36 @@ public class SlidingTimeWindow {
 
     /**
      * record current ts millis.
-     *
-     * @param millis
      */
     public synchronized void record(long millis) {
-        log.debug("window before is{}", this);
+        log.debug("window before is [{}]", this);
         log.debug("window add record ({})", millis);
         long ts = millis / 1000;
         if (_start_ts == -1L) {
             initRing(ts);
         } else {   // TODO  Prev 是否需要考虑
             if (ts == _curr_ts) {
-                log.debug("window ts:" + ts + ", curr_ts:" + _curr_ts + ", size:" + size);
+                log.debug("window ts is [{}], curr_ts is [{}], size is [{}]", ts, _curr_ts, size);
                 this.ringBuffer.incr(_curr_mark, 1);
             } else if (ts > _curr_ts && ts < _curr_ts + size) {
                 int offset = (int) (ts - _curr_ts);
-                log.debug("window ts:" + ts + ", curr_ts:" + _curr_ts + ", size:" + size + ", offset:" + offset);
+                log.debug("window ts is [{}], curr_ts is [{}], size is [{}], offset is [{}]", ts, _curr_ts, size, offset);
                 this.ringBuffer.reset(_curr_mark + 1, offset);
                 this.ringBuffer.incr(_curr_mark + offset, 1);
                 _curr_ts = ts;
                 _curr_mark = (_curr_mark + offset) % size;
             } else if (ts >= _curr_ts + size) {
-                log.debug("window ts:" + ts + ", curr_ts:" + _curr_ts + ", size:" + size);
+                log.debug("window ts is [{}], curr_ts is [{}], size is [{}]", ts, _curr_ts, size);
                 this.ringBuffer.reset();
                 initRing(ts);
             }
         }
         this.sum = this.ringBuffer.sum();
-        log.debug("window after is {}", this);
+        log.debug("window after is [{}]", this);
     }
 
     private void initRing(long ts) {
-        log.debug("window initRing ts is" + ts);
+        log.debug("window initRing ts is [{}]", ts);
         this._start_ts = ts;
         this._curr_ts = ts;
         this._curr_mark = 0;

@@ -62,6 +62,7 @@ public class ProviderBootstrap implements ApplicationContextAware {
         String host = InetAddress.getLocalHost().getHostAddress();
         this.instance = InstanceMeta.http(host, Integer.valueOf(port));
         this.instance.getParameters().putAll(this.metas);
+        metas.forEach((k, v) -> log.debug("instance Parameters key:value is [{}:{}]", k, v));
         this.skeleton.keySet().forEach(this::registerService);
     }
 

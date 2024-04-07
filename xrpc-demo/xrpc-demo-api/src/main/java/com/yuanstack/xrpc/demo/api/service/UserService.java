@@ -97,4 +97,7 @@ public interface UserService {
      * @return 端口号集合
      */
     String setPorts(String ports);
+
+
+    String echoParameter(String key);
 }

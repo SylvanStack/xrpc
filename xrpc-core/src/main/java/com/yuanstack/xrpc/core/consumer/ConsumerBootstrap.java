@@ -7,6 +7,7 @@ import com.yuanstack.xrpc.core.meta.ServiceMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -47,19 +48,18 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
     @Value("${app.grayRatio}")
     private Integer grayRatio;
 
-    public void start() {
-        Router<InstanceMeta> router = applicationContext.getBean(Router.class);
-        Loadbalancer<InstanceMeta> loadbalancer = applicationContext.getBean(Loadbalancer.class);
-        List<Filter> filters = new ArrayList<>(applicationContext.getBeansOfType(Filter.class).values());
+    @Value("${app.faultLimit}")
+    private int faultLimit;
 
-        RpcContext rpcContext = new RpcContext();
-        rpcContext.setRouter(router);
-        rpcContext.setLoadbalancer(loadbalancer);
-        rpcContext.setFilters(filters);
-        rpcContext.getParameters().put("app.retries", String.valueOf(retries));
-        rpcContext.getParameters().put("app.timeout", String.valueOf(timeout));
-        rpcContext.getParameters().put("app.grayRatio", String.valueOf(grayRatio));
+    @Value("${app.halfOpenInitialDelay}")
+    private int halfOpenInitialDelay;
+
+    @Value("${app.halfOpenDelay}")
+    private int halfOpenDelay;
+
+    public void start() {
         RegistryCenter registryCenter = applicationContext.getBean(RegistryCenter.class);
+        RpcContext rpcContext = createContext();
 
         String[] beanDefinitionNames = applicationContext.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
@@ -67,11 +67,10 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
             List<Field> fields = MethodUtils.findAnnotatedField(bean.getClass(), XConsumer.class);
 
             fields.forEach(field -> {
+                Class<?> service = field.getType();
+                String serviceName = service.getCanonicalName();
+                log.info("consumer name is [{}]", field.getName());
                 try {
-                    log.info("consumer name " + field.getName());
-                    Class<?> service = field.getType();
-                    String serviceName = service.getCanonicalName();
-
                     Object consumer = stub.get(serviceName);
                     if (consumer == null) {
                         consumer = createConsumerFromRegistry(service, rpcContext, registryCenter);
@@ -80,11 +79,35 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
 
                     field.setAccessible(true);
                     field.set(bean, consumer);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
+                } catch (Exception ex) {
+                    // ignore and print it
+                    log.warn("Field [{}.{}] create consumer failed.", serviceName, field.getName());
+                    log.error("Ignore and print it as: ", ex);
                 }
             });
         }
+    }
+
+    @NotNull
+    private RpcContext createContext() {
+        RpcContext rpcContext = new RpcContext();
+
+        Router<InstanceMeta> router = applicationContext.getBean(Router.class);
+        rpcContext.setRouter(router);
+
+        Loadbalancer<InstanceMeta> loadbalancer = applicationContext.getBean(Loadbalancer.class);
+        rpcContext.setLoadbalancer(loadbalancer);
+
+        List<Filter> filters = new ArrayList<>(applicationContext.getBeansOfType(Filter.class).values());
+        rpcContext.setFilters(filters);
+
+        rpcContext.getParameters().put("app.retries", String.valueOf(retries));
+        rpcContext.getParameters().put("app.timeout", String.valueOf(timeout));
+        rpcContext.getParameters().put("app.grayRatio", String.valueOf(grayRatio));
+        rpcContext.getParameters().put("app.faultLimit", String.valueOf(faultLimit));
+        rpcContext.getParameters().put("app.halfOpenInitialDelay", String.valueOf(halfOpenInitialDelay));
+        rpcContext.getParameters().put("app.halfOpenDelay", String.valueOf(halfOpenDelay));
+        return rpcContext;
     }
 
     private Object createConsumerFromRegistry(Class<?> service, RpcContext context, RegistryCenter rc) {

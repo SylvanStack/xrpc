@@ -1,6 +1,7 @@
 package com.yuanstack.xrpc.demo.consumer;
 
 import com.yuanstack.xrpc.core.annotation.XConsumer;
+import com.yuanstack.xrpc.core.api.RpcContext;
 import com.yuanstack.xrpc.core.consumer.ConsumerConfig;
 import com.yuanstack.xrpc.demo.api.dto.Order;
 import com.yuanstack.xrpc.demo.api.dto.User;
@@ -33,13 +34,7 @@ public class XrpcDemoConsumerApplication {
     public ApplicationRunner consumerRunner() {
         return x -> {
             log.info("=========consumerRunner==========");
-
-            long start = System.currentTimeMillis();
-            User user = userService.findTimeOut(500);
-            log.info("time out case response user is {}, use time is {} ms",
-                    user, System.currentTimeMillis() - start);
-
-            //   allTestCase();
+            allTestCase();
         };
     }
 
@@ -74,6 +69,22 @@ public class XrpcDemoConsumerApplication {
 
         // Object 方法调用
         log.info(orderService.toString());
+
+        long start = System.currentTimeMillis();
+        User user2 = userService.findTimeOut(500);
+        log.info("time out case response user is {}, use time is {} ms",
+                user2, System.currentTimeMillis() - start);
+
+        // 测试通过Context跨消费者和提供者进行传参
+        String Key_Version = "rpc.version";
+        String Key_Message = "rpc.message";
+        RpcContext.setContextParameter(Key_Version, "v8");
+        RpcContext.setContextParameter(Key_Message, "this is a test message");
+        String version = userService.echoParameter(Key_Version);
+        String message = userService.echoParameter(Key_Message);
+        System.out.println(" ===> echo parameter from c->p->c: " + Key_Version + " -> " + version);
+        System.out.println(" ===> echo parameter from c->p->c: " + Key_Message + " -> " + message);
+        RpcContext.ContextParameters.get().clear();
     }
 
 }
