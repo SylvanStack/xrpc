@@ -2,6 +2,9 @@ package com.yuanstack.xrpc.core.cluster;
 
 import com.yuanstack.xrpc.core.api.Router;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +14,15 @@ import java.util.Random;
  * @author Sylvan
  * @date 2024/04/04  19:28
  */
+@Slf4j
 public class GrayRouter implements Router<InstanceMeta> {
 
     /**
      * 灰度流量占比
      */
-    private final Integer grayRatio;
+    @Getter
+    @Setter
+    private Integer grayRatio;
 
     private final Random random = new Random();
 
@@ -44,6 +50,9 @@ public class GrayRouter implements Router<InstanceMeta> {
         if (normalNodes.isEmpty() || grayNodes.isEmpty()) {
             return providers;
         }
+
+        log.debug("grayRouter grayNodes/normalNodes is {}/{}, grayRatio is {}",
+                grayNodes.size(), normalNodes.size(), grayRatio);
 
         if (grayRatio <= 0) {
             return normalNodes;

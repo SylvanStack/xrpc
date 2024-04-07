@@ -1,7 +1,6 @@
 package com.yuanstack.xrpc.core.meta;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +25,7 @@ public class ServiceMeta {
     private String namespace;
     private String env;
     private String name;
-    private Map<String, String> parameters = new HashMap<>();
+    private final Map<String, String> parameters = new HashMap<>();
 
     public String toPath() {
         return String.format("%s_%s_%s_%s", app, namespace, env, name);

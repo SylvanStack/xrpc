@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -97,8 +96,6 @@ public class ZkRegistryCenter implements RegistryCenter {
         try {
             List<String> nodes = client.getChildren().forPath(servicePath);
             log.info("===> fetchAll form zk:" + servicePath);
-            nodes.forEach(System.out::println);
-
             return mapInstances(nodes, servicePath);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -108,7 +105,8 @@ public class ZkRegistryCenter implements RegistryCenter {
     private List<InstanceMeta> mapInstances(List<String> nodes, String servicePath) {
         return nodes.stream().map(node -> {
             String[] split = node.split("_");
-            InstanceMeta instanceMeta = InstanceMeta.http(split[0], Integer.valueOf(split[1]));
+            InstanceMeta instance = InstanceMeta.http(split[0], Integer.valueOf(split[1]));
+            log.info("find instance is [{}]", instance.toUrl());
 
             String nodePath = servicePath + "/" + node;
             byte[] bytes;
@@ -117,10 +115,13 @@ public class ZkRegistryCenter implements RegistryCenter {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            HashMap params = JSON.parseObject(new String(bytes), HashMap.class);
-            params.forEach((k, v) -> log.debug("instance meta params {} : {}", k, v));
-            instanceMeta.setParameters(params);
-            return instanceMeta;
+
+            HashMap<String, Object> params = JSON.parseObject(new String(bytes), HashMap.class);
+            params.forEach((k, v) -> {
+                log.debug("instance meta params {} : {}", k, v);
+                instance.getParameters().put(k, v == null ? null : v.toString());
+            });
+            return instance;
         }).collect(Collectors.toList());
     }
 

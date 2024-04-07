@@ -20,4 +20,18 @@ public class RpcContext {
     private Loadbalancer<InstanceMeta> loadbalancer;
 
     private Map<String, String> parameters = new HashMap<>();
+
+    public static ThreadLocal<Map<String,String>> ContextParameters = ThreadLocal.withInitial(HashMap::new);
+
+    public static void setContextParameter(String key, String value) {
+        ContextParameters.get().put(key, value);
+    }
+
+    public static String getContextParameter(String key) {
+        return ContextParameters.get().get(key);
+    }
+
+    public static void removeContextParameter(String key) {
+        ContextParameters.get().remove(key);
+    }
 }

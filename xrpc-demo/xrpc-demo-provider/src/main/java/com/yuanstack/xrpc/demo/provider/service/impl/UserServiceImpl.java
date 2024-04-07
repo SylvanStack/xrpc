@@ -1,6 +1,7 @@
 package com.yuanstack.xrpc.demo.provider.service.impl;
 
 import com.yuanstack.xrpc.core.annotation.XProvider;
+import com.yuanstack.xrpc.core.api.RpcContext;
 import com.yuanstack.xrpc.demo.api.dto.User;
 import com.yuanstack.xrpc.demo.api.service.UserService;
 import jakarta.annotation.Resource;
@@ -107,5 +108,12 @@ public class UserServiceImpl implements UserService {
     public String setPorts(String ports) {
         this.ports = ports;
         return this.ports;
+    }
+
+    @Override
+    public String echoParameter(String key) {
+        RpcContext.ContextParameters.get().forEach(
+                (k, v) -> log.info("RpcContext.ContextParameters key:value is [{}:{}]", k, v));
+        return RpcContext.getContextParameter(key);
     }
 }
