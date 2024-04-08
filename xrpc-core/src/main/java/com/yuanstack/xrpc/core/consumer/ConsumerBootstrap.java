@@ -1,14 +1,13 @@
 package com.yuanstack.xrpc.core.consumer;
 
 import com.yuanstack.xrpc.core.annotation.XConsumer;
-import com.yuanstack.xrpc.core.api.*;
+import com.yuanstack.xrpc.core.api.RegistryCenter;
+import com.yuanstack.xrpc.core.api.RpcContext;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.meta.ServiceMeta;
 import com.yuanstack.xrpc.core.util.MethodUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
@@ -16,7 +15,6 @@ import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,33 +31,11 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
 
     private ApplicationContext applicationContext;
     private Environment environment;
-
     private Map<String, Object> stub = new HashMap<>();
-    @Value("${app.id}")
-    private String app;
-    @Value("${app.namespace}")
-    private String namespace;
-    @Value("${app.env}")
-    private String env;
-    @Value("${app.retries}")
-    private Integer retries;
-    @Value("${app.timeout}")
-    private Integer timeout;
-    @Value("${app.grayRatio}")
-    private Integer grayRatio;
-
-    @Value("${app.faultLimit}")
-    private int faultLimit;
-
-    @Value("${app.halfOpenInitialDelay}")
-    private int halfOpenInitialDelay;
-
-    @Value("${app.halfOpenDelay}")
-    private int halfOpenDelay;
 
     public void start() {
         RegistryCenter registryCenter = applicationContext.getBean(RegistryCenter.class);
-        RpcContext rpcContext = createContext();
+        RpcContext rpcContext = applicationContext.getBean(RpcContext.class);
 
         String[] beanDefinitionNames = applicationContext.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
@@ -88,35 +64,12 @@ public class ConsumerBootstrap implements ApplicationContextAware, EnvironmentAw
         }
     }
 
-    @NotNull
-    private RpcContext createContext() {
-        RpcContext rpcContext = new RpcContext();
-
-        Router<InstanceMeta> router = applicationContext.getBean(Router.class);
-        rpcContext.setRouter(router);
-
-        Loadbalancer<InstanceMeta> loadbalancer = applicationContext.getBean(Loadbalancer.class);
-        rpcContext.setLoadbalancer(loadbalancer);
-
-        List<Filter> filters = new ArrayList<>(applicationContext.getBeansOfType(Filter.class).values());
-        rpcContext.setFilters(filters);
-
-        rpcContext.getParameters().put("app.retries", String.valueOf(retries));
-        rpcContext.getParameters().put("app.timeout", String.valueOf(timeout));
-        rpcContext.getParameters().put("app.grayRatio", String.valueOf(grayRatio));
-        rpcContext.getParameters().put("app.faultLimit", String.valueOf(faultLimit));
-        rpcContext.getParameters().put("app.halfOpenInitialDelay", String.valueOf(halfOpenInitialDelay));
-        rpcContext.getParameters().put("app.halfOpenDelay", String.valueOf(halfOpenDelay));
-        return rpcContext;
-    }
-
     private Object createConsumerFromRegistry(Class<?> service, RpcContext context, RegistryCenter rc) {
-        String serviceName = service.getCanonicalName();
         ServiceMeta serviceMeta = ServiceMeta.builder()
-                .app(app)
-                .namespace(namespace)
-                .env(env)
-                .name(serviceName).build();
+                .app(context.param("app.id"))
+                .namespace(context.param("app.namespace"))
+                .env(context.param("app.env"))
+                .name(service.getCanonicalName()).build();
         List<InstanceMeta> providers = rc.fetchAll(serviceMeta);
 
         rc.subscribe(serviceMeta, event -> {

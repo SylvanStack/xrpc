@@ -39,13 +39,13 @@ public class XInvocationHandler implements InvocationHandler {
         this.service = service;
         this.rpcContext = rpcContext;
         this.providers = providers;
-        Integer timeout = Integer.valueOf(rpcContext.getParameters().getOrDefault("app.timeout", "1000"));
+        Integer timeout = Integer.valueOf(rpcContext.getParameters().getOrDefault("consumer.timeout", "1000"));
         this.httpInvoker = new OkHttpInvoker(timeout);
         this.executorService = Executors.newScheduledThreadPool(1);
         int halfOpenInitialDelay = Integer.parseInt(rpcContext.getParameters()
-                .getOrDefault("app.halfOpenInitialDelay", "10000"));
+                .getOrDefault("consumer.halfOpenInitialDelay", "10000"));
         int halfOpenDelay = Integer.parseInt(rpcContext.getParameters()
-                .getOrDefault("app.halfOpenDelay", "60000"));
+                .getOrDefault("consumer.halfOpenDelay", "60000"));
         this.executorService.scheduleWithFixedDelay(this::halfOpen, halfOpenInitialDelay, halfOpenDelay, TimeUnit.SECONDS);
     }
 
@@ -67,9 +67,9 @@ public class XInvocationHandler implements InvocationHandler {
         rpcRequest.setArgs(args);
 
         int retries = Integer.parseInt(
-                rpcContext.getParameters().getOrDefault("app.retries", "1"));
+                rpcContext.getParameters().getOrDefault("consumer.retries", "1"));
         int faultLimit = Integer.parseInt(rpcContext.getParameters()
-                .getOrDefault("app.faultLimit", "10"));
+                .getOrDefault("consumer.faultLimit", "10"));
 
         while (retries-- > 0) {
             log.debug("invoke service provider retries count is [{}]", retries);
@@ -146,12 +146,12 @@ public class XInvocationHandler implements InvocationHandler {
         if (rpcResponse.isStatus()) {
             return castMethodResult(method, rpcResponse.getData());
         } else {
-            Exception exception = rpcResponse.getEx();
-            if (exception instanceof RpcException ex) {
-                throw ex;
-            } else {
-                throw new RpcException(exception, RpcException.UnknownEx);
+            RpcException exception = rpcResponse.getEx();
+            if (exception != null) {
+                log.error("response error.", exception);
+                throw exception;
             }
+            return null;
         }
     }
 

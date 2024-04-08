@@ -4,7 +4,7 @@ import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
 
 /**
- * http 调用
+ * Interface for http invoke.
  *
  * @author Sylvan
  * @date 2024/03/23  18:28

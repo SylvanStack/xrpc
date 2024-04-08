@@ -25,7 +25,7 @@ class XrpcDemoConsumerApplicationTests {
         testZookeeperServer = new TestZookeeperServer();
         testZookeeperServer.start();
         context = SpringApplication.run(XrpcDemoProviderApplication.class,
-                "--server.port=8084", "--logging.level.root=debug", "--xrpc.zkServers=localhost:2182");
+                "--server.port=8084", "--logging.level.root=debug", "--xrpc.zk.server=localhost:2182");
     }
 
     @Test
