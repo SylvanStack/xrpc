@@ -2,7 +2,7 @@ package com.yuanstack.xrpc.demo.consumer;
 
 import com.yuanstack.xrpc.core.annotation.XConsumer;
 import com.yuanstack.xrpc.core.api.RpcContext;
-import com.yuanstack.xrpc.core.consumer.ConsumerConfig;
+import com.yuanstack.xrpc.core.config.ConsumerConfig;
 import com.yuanstack.xrpc.demo.api.dto.Order;
 import com.yuanstack.xrpc.demo.api.dto.User;
 import com.yuanstack.xrpc.demo.api.service.OrderService;

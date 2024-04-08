@@ -2,6 +2,8 @@ package com.yuanstack.xrpc.core.provider;
 
 import com.yuanstack.xrpc.core.annotation.XProvider;
 import com.yuanstack.xrpc.core.api.RegistryCenter;
+import com.yuanstack.xrpc.core.config.AppConfigProperties;
+import com.yuanstack.xrpc.core.config.ProviderConfigProperties;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.meta.ProviderMeta;
 import com.yuanstack.xrpc.core.meta.ServiceMeta;
@@ -11,7 +13,6 @@ import jakarta.annotation.PreDestroy;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.LinkedMultiValueMap;
@@ -33,22 +34,19 @@ import java.util.Map;
 public class ProviderBootstrap implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
-
+    private String port;
+    private AppConfigProperties appProperties;
+    private ProviderConfigProperties providerProperties;
     private MultiValueMap<String, ProviderMeta> skeleton = new LinkedMultiValueMap<>();
-
     private InstanceMeta instance;
     private RegistryCenter rc;
 
-    @Value("${server.port}")
-    private String port;
-    @Value("${app.id}")
-    private String app;
-    @Value("${app.namespace}")
-    private String namespace;
-    @Value("${app.env}")
-    private String env;
-    @Value("#{${app.metas}}")
-    private Map<String, String> metas;
+    public ProviderBootstrap(String port, AppConfigProperties appProperties,
+                             ProviderConfigProperties providerProperties) {
+        this.port = port;
+        this.appProperties = appProperties;
+        this.providerProperties = providerProperties;
+    }
 
     @PostConstruct
     public void init() {
@@ -61,8 +59,8 @@ public class ProviderBootstrap implements ApplicationContextAware {
     public void start() {
         String host = InetAddress.getLocalHost().getHostAddress();
         this.instance = InstanceMeta.http(host, Integer.valueOf(port));
-        this.instance.getParameters().putAll(this.metas);
-        metas.forEach((k, v) -> log.debug("instance Parameters key:value is [{}:{}]", k, v));
+        this.instance.getParameters().putAll(providerProperties.getMetas());
+        providerProperties.getMetas().forEach((k, v) -> log.debug("instance Parameters key:value is [{}:{}]", k, v));
         this.skeleton.keySet().forEach(this::registerService);
     }
 
@@ -73,18 +71,18 @@ public class ProviderBootstrap implements ApplicationContextAware {
 
     private void registerService(String service) {
         ServiceMeta serviceMeta = ServiceMeta.builder()
-                .app(app)
-                .namespace(namespace)
-                .env(env)
+                .app(appProperties.getId())
+                .namespace(appProperties.getNamespace())
+                .env(appProperties.getEnv())
                 .name(service).build();
         rc.register(serviceMeta, instance);
     }
 
     private void unregisterService(String service) {
         ServiceMeta serviceMeta = ServiceMeta.builder()
-                .app(app)
-                .namespace(namespace)
-                .env(env)
+                .app(appProperties.getId())
+                .namespace(appProperties.getNamespace())
+                .env(appProperties.getEnv())
                 .name(service).build();
         rc.register(serviceMeta, instance);
     }
