@@ -39,13 +39,10 @@ public class XInvocationHandler implements InvocationHandler {
         this.service = service;
         this.rpcContext = rpcContext;
         this.providers = providers;
-        Integer timeout = Integer.valueOf(rpcContext.getParameters().getOrDefault("consumer.timeout", "1000"));
-        this.httpInvoker = new OkHttpInvoker(timeout);
+        this.httpInvoker = new OkHttpInvoker(rpcContext.getConsumerProperties().getTimeout());
         this.executorService = Executors.newScheduledThreadPool(1);
-        int halfOpenInitialDelay = Integer.parseInt(rpcContext.getParameters()
-                .getOrDefault("consumer.halfOpenInitialDelay", "10000"));
-        int halfOpenDelay = Integer.parseInt(rpcContext.getParameters()
-                .getOrDefault("consumer.halfOpenDelay", "60000"));
+        int halfOpenInitialDelay = rpcContext.getConsumerProperties().getHalfOpenInitialDelay();
+        int halfOpenDelay = rpcContext.getConsumerProperties().getHalfOpenDelay();
         this.executorService.scheduleWithFixedDelay(this::halfOpen, halfOpenInitialDelay, halfOpenDelay, TimeUnit.SECONDS);
     }
 
@@ -66,10 +63,8 @@ public class XInvocationHandler implements InvocationHandler {
         rpcRequest.setMethodSign(MethodUtils.generateMethodSign(method));
         rpcRequest.setArgs(args);
 
-        int retries = Integer.parseInt(
-                rpcContext.getParameters().getOrDefault("consumer.retries", "1"));
-        int faultLimit = Integer.parseInt(rpcContext.getParameters()
-                .getOrDefault("consumer.faultLimit", "10"));
+        int retries =  rpcContext.getConsumerProperties().getRetries();
+        int faultLimit =  rpcContext.getConsumerProperties().getFaultLimit();
 
         while (retries-- > 0) {
             log.debug("invoke service provider retries count is [{}]", retries);

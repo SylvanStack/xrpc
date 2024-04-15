@@ -2,8 +2,8 @@ package com.yuanstack.xrpc.core.provider;
 
 import com.yuanstack.xrpc.core.annotation.XProvider;
 import com.yuanstack.xrpc.core.api.RegistryCenter;
-import com.yuanstack.xrpc.core.config.AppConfigProperties;
-import com.yuanstack.xrpc.core.config.ProviderConfigProperties;
+import com.yuanstack.xrpc.core.config.AppProperties;
+import com.yuanstack.xrpc.core.config.ProviderProperties;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.meta.ProviderMeta;
 import com.yuanstack.xrpc.core.meta.ServiceMeta;
@@ -35,14 +35,14 @@ public class ProviderBootstrap implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
     private String port;
-    private AppConfigProperties appProperties;
-    private ProviderConfigProperties providerProperties;
+    private AppProperties appProperties;
+    private ProviderProperties providerProperties;
     private MultiValueMap<String, ProviderMeta> skeleton = new LinkedMultiValueMap<>();
     private InstanceMeta instance;
     private RegistryCenter rc;
 
-    public ProviderBootstrap(String port, AppConfigProperties appProperties,
-                             ProviderConfigProperties providerProperties) {
+    public ProviderBootstrap(String port, AppProperties appProperties,
+                             ProviderProperties providerProperties) {
         this.port = port;
         this.appProperties = appProperties;
         this.providerProperties = providerProperties;

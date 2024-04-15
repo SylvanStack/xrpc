@@ -1,5 +1,6 @@
 package com.yuanstack.xrpc.core.api;
 
+import com.yuanstack.xrpc.core.config.ConsumerProperties;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import lombok.Data;
 
@@ -20,6 +21,8 @@ public class RpcContext {
     private Loadbalancer<InstanceMeta> loadbalancer;
 
     private Map<String, String> parameters = new HashMap<>();
+
+    private ConsumerProperties consumerProperties;
 
     public String param(String key) {
         return parameters.get(key);

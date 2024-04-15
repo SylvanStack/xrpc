@@ -4,12 +4,13 @@ import com.yuanstack.xrpc.core.api.*;
 import com.yuanstack.xrpc.core.cluster.GrayRouter;
 import com.yuanstack.xrpc.core.cluster.RoundRibonLoadbalancer;
 import com.yuanstack.xrpc.core.consumer.ConsumerBootstrap;
-import com.yuanstack.xrpc.core.filter.ParameterFilter;
+import com.yuanstack.xrpc.core.filter.ContextParameterFilter;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
 import com.yuanstack.xrpc.core.registry.zk.ZkRegistryCenter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -23,16 +24,22 @@ import java.util.List;
  */
 @Slf4j
 @Configuration
-@Import({AppConfigProperties.class, ConsumerConfigProperties.class})
+@Import({AppProperties.class, ConsumerProperties.class})
 public class ConsumerConfig {
 
-    final AppConfigProperties appConfigProperties;
+    final AppProperties appProperties;
 
-    final ConsumerConfigProperties consumerConfigProperties;
+    final ConsumerProperties consumerProperties;
 
-    public ConsumerConfig(AppConfigProperties appConfigProperties, ConsumerConfigProperties consumerConfigProperties) {
-        this.appConfigProperties = appConfigProperties;
-        this.consumerConfigProperties = consumerConfigProperties;
+    @Bean
+    @ConditionalOnMissingBean
+    ApolloChangedListener consumer_apolloChangedListener() {
+        return new ApolloChangedListener();
+    }
+
+    public ConsumerConfig(AppProperties appProperties, ConsumerProperties consumerProperties) {
+        this.appProperties = appProperties;
+        this.consumerProperties = consumerProperties;
     }
 
     @Bean
@@ -56,13 +63,13 @@ public class ConsumerConfig {
 
     @Bean
     public Router<InstanceMeta> router() {
-        log.debug("GrayRouter grayRatio is [{}]", consumerConfigProperties.getGrayRatio());
-        return new GrayRouter(consumerConfigProperties.getGrayRatio());
+        log.debug("GrayRouter grayRatio is [{}]", consumerProperties.getGrayRatio());
+        return new GrayRouter(consumerProperties.getGrayRatio());
     }
 
     @Bean
     public Filter defaultFilter() {
-        return new ParameterFilter();
+        return new ContextParameterFilter();
     }
 
     @Bean
@@ -83,16 +90,10 @@ public class ConsumerConfig {
         rpcContext.setRouter(router);
         rpcContext.setLoadbalancer(loadbalancer);
         rpcContext.setFilters(filters);
-        rpcContext.getParameters().put("app.id", appConfigProperties.getId());
-        rpcContext.getParameters().put("app.namespace", appConfigProperties.getNamespace());
-        rpcContext.getParameters().put("app.env", appConfigProperties.getEnv());
-
-        rpcContext.getParameters().put("consumer.retries", String.valueOf(consumerConfigProperties.getRetries()));
-        rpcContext.getParameters().put("consumer.timeout", String.valueOf(consumerConfigProperties.getTimeout()));
-        rpcContext.getParameters().put("consumer.grayRatio", String.valueOf(consumerConfigProperties.getGrayRatio()));
-        rpcContext.getParameters().put("consumer.faultLimit", String.valueOf(consumerConfigProperties.getFaultLimit()));
-        rpcContext.getParameters().put("consumer.halfOpenInitialDelay", String.valueOf(consumerConfigProperties.getHalfOpenInitialDelay()));
-        rpcContext.getParameters().put("consumer.halfOpenDelay", String.valueOf(consumerConfigProperties.getHalfOpenDelay()));
+        rpcContext.getParameters().put("app.id", appProperties.getId());
+        rpcContext.getParameters().put("app.namespace", appProperties.getNamespace());
+        rpcContext.getParameters().put("app.env", appProperties.getEnv());
+        rpcContext.setConsumerProperties(consumerProperties);
         return rpcContext;
     }
 }
