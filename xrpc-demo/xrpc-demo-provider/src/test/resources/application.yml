@@ -13,6 +13,7 @@ xrpc:
       dc: bj
       gray: false
       unit: B002
+      tc: 300
 logging:
   level:
     root: info
