@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.yuanstack</groupId>
+        <groupId>io.github.sylvanstack</groupId>
         <artifactId>xrpc-demo</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${xrpc.version}</version>
     </parent>
 
     <artifactId>xrpc-demo-consumer</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>${xrpc.version}</version>
     <name>xrpc-demo-consumer</name>
     <description>xrpc-demo-consumer</description>
     <properties>
@@ -32,21 +32,21 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.yuanstack</groupId>
+            <groupId>io.github.sylvanstack</groupId>
             <artifactId>xrpc-core</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${xrpc.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.yuanstack</groupId>
+            <groupId>io.github.sylvanstack</groupId>
             <artifactId>xrpc-demo-api</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${xrpc.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.yuanstack</groupId>
+            <groupId>io.github.sylvanstack</groupId>
             <artifactId>xrpc-demo-provider</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${xrpc.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
