@@ -16,6 +16,7 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,25 +29,37 @@ import java.util.stream.Collectors;
 public class ZkRegistryCenter implements RegistryCenter {
     private CuratorFramework client = null;
     @Value("${xrpc.zk.root:xrpc}")
-    private String zkRoot;
+    private String root;
     @Value("${xrpc.zk.server:localhost:2181}")
-    private String zkServers;
+    private String servers;
+    private final List<TreeCache> caches = new ArrayList<>();
+    private final boolean running = false;
 
     @Override
-    public void start() {
+    public synchronized void start() {
+        if (running) {
+            log.info(" ===> zk client has started to server[" + servers + "/" + root + "], ignored.");
+            return;
+        }
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
         client = CuratorFrameworkFactory.builder()
-                .connectString(zkServers)
-                .namespace(zkRoot)
+                .connectString(servers)
+                .namespace(root)
                 .retryPolicy(retryPolicy)
                 .build();
         client.start();
-        log.info(" Zk client started to servers [" + zkServers + "/" + zkRoot + "] .");
+        log.info(" Zk client started to servers [" + servers + "/" + root + "] .");
     }
 
     @Override
-    public void stop() {
-        log.info(" Zk client stopped.");
+    public synchronized void stop() {
+        if (!running) {
+            log.info(" ===> zk client isn't running to server[" + servers + "/" + root + "], ignored.");
+            return;
+        }
+        log.info(" ===> zk tree cache closed.");
+        caches.forEach(TreeCache::close);
+        log.info(" ===> zk client stopped.");
         client.close();
     }
 
@@ -132,15 +145,19 @@ public class ZkRegistryCenter implements RegistryCenter {
                 .setCacheData(true).setMaxDepth(2).build();
         cache.getListenable().addListener(
                 (curator, event) -> {
-                    // 有任何节点变动都会执行
-                    log.info("zk subscribe event" + event);
-
-                    List<InstanceMeta> nodes = fetchAll(service);
-                    changeListener.fire(new Event(nodes));
+                    synchronized (ZkRegistryCenter.class) {
+                        if (running) {
+                            // 有任何节点变动这里会执行
+                            log.info("zk subscribe event: " + event);
+                            List<InstanceMeta> nodes = fetchAll(service);
+                            changeListener.fire(new Event(nodes));
+                        }
+                    }
                 }
         );
 
         cache.start();
+        caches.add(cache);
     }
 
     @Override
