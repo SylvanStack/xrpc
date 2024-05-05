@@ -2,10 +2,13 @@ package com.yuanstack.xrpc.demo.provider.controller;
 
 import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
+import com.yuanstack.xrpc.core.config.ProviderProperties;
 import com.yuanstack.xrpc.core.provider.ProviderInvoker;
 import com.yuanstack.xrpc.demo.api.service.UserService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @author Sylvan
@@ -18,6 +21,8 @@ public class UserController {
     private ProviderInvoker providerInvoker;
     @Resource
     private UserService userService;
+    @Resource
+    private ProviderProperties providerProperties;
 
     //  使用HTTP + JSON 来实现序列化和通信
 
@@ -34,5 +39,10 @@ public class UserController {
     @GetMapping("/health/check")
     public String checkHealth() {
         return "ok";
+    }
+
+    @GetMapping("/metas")
+    public Map<String, String> getMate() {
+        return providerProperties.getMetas();
     }
 }

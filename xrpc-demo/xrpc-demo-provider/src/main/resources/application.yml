@@ -22,7 +22,7 @@ logging:
 app:
   id: app1
 apollo:
-  cacheDir: /opt/data/                       #配置本地配置缓存目录
+  cacheDir: /2024-Plan/practices/xrpc/data                         #配置本地配置缓存目录
   cluster: default                           #指定使用哪个集群的配置
   meta: http://localhost:8080           #DEV环境配置中心地址
   autoUpdateInjectedSpringProperties: true   #是否开启 Spring 参数自动更新
