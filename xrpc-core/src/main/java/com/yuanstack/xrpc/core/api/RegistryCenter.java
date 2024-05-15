@@ -11,23 +11,20 @@ import java.util.List;
  * @date 2024/03/21  23:20
  */
 public interface RegistryCenter {
-    // 注册中心 Provider & Consumer 侧都需要
+    // ================== 注册中心 Provider & Consumer 侧都需要  ====================
     void start();
 
     void stop();
 
-
-    // provider侧
+    // =============================== provider侧  ===============================
     void register(ServiceMeta service, InstanceMeta instance);
 
     void unregister(ServiceMeta service, InstanceMeta instance);
 
-    // consumer侧
+    // =============================== consumer侧  ===============================
     List<InstanceMeta> fetchAll(ServiceMeta service);
 
     void subscribe(ServiceMeta service, ChangeListener changeListener);
-
-    void heartbeat();
 
     class StaticRegistryCenter implements RegistryCenter {
 
@@ -64,11 +61,6 @@ public interface RegistryCenter {
 
         @Override
         public void subscribe(ServiceMeta service, ChangeListener changeListener) {
-
-        }
-
-        @Override
-        public void heartbeat() {
 
         }
     }

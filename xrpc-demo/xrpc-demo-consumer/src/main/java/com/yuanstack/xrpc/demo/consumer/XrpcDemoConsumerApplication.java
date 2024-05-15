@@ -60,8 +60,8 @@ public class XrpcDemoConsumerApplication {
         log.info(String.valueOf(order));
 
         // 异常case
-        Order order404 = orderService.findById(404);
-        log.info(String.valueOf(order404));
+        //Order order404 = orderService.findById(404);
+        //log.info(String.valueOf(order404));
 
         // 返回基本类型Case
         int userId = userService.getId(2);

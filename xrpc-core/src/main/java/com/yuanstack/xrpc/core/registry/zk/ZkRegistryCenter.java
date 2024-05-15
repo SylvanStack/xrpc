@@ -159,9 +159,4 @@ public class ZkRegistryCenter implements RegistryCenter {
         cache.start();
         caches.add(cache);
     }
-
-    @Override
-    public void heartbeat() {
-
-    }
 }

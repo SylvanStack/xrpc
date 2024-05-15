@@ -15,6 +15,10 @@ xrpc:
     faultLimit: 10 # 30s 内10次错误则隔离
     halfOpenInitialDelay: 10000
     halfOpenDelay: 60000
+xregistry:
+  enabled: true
+  servers: http://localhost:8484
+
 logging:
   level:
     root: info
