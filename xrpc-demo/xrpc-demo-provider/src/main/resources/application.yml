@@ -14,6 +14,9 @@ xrpc:
       gray: false
       unit: B001
       tc: 300
+xregistry:
+  enabled: true
+  servers: http://localhost:8484
 logging:
   level:
     root: debug
@@ -27,7 +30,7 @@ apollo:
   meta: http://localhost:8080           #DEV环境配置中心地址
   autoUpdateInjectedSpringProperties: true   #是否开启 Spring 参数自动更新
   bootstrap:
-    enabled: true                            #是否开启 Apollo
+    enabled: false                            #是否开启 Apollo
     namespaces: app1                  #设置 Namespace
     eagerLoad:
       enabled: false

@@ -6,11 +6,10 @@ import com.yuanstack.xrpc.core.cluster.RoundRibonLoadbalancer;
 import com.yuanstack.xrpc.core.consumer.ConsumerBootstrap;
 import com.yuanstack.xrpc.core.filter.ContextParameterFilter;
 import com.yuanstack.xrpc.core.meta.InstanceMeta;
-import com.yuanstack.xrpc.core.registry.zk.ZkRegistryCenter;
+import com.yuanstack.xrpc.core.registry.xregistry.XRegistryCenter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -31,11 +30,11 @@ public class ConsumerConfig {
 
     final ConsumerProperties consumerProperties;
 
-    @Bean
-    @ConditionalOnMissingBean
-    ApolloChangedListener consumer_apolloChangedListener() {
-        return new ApolloChangedListener();
-    }
+    //@Bean
+    //@ConditionalOnMissingBean
+    //ApolloChangedListener consumer_apolloChangedListener() {
+    //    return new ApolloChangedListener();
+    //}
 
     public ConsumerConfig(AppProperties appProperties, ConsumerProperties consumerProperties) {
         this.appProperties = appProperties;
@@ -79,7 +78,7 @@ public class ConsumerConfig {
 
     @Bean(initMethod = "start", destroyMethod = "stop")
     public RegistryCenter consumerRegistryCenter() {
-        return new ZkRegistryCenter();
+        return new XRegistryCenter();
     }
 
     @Bean
