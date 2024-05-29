@@ -1,5 +1,6 @@
 package com.yuanstack.xrpc.demo.provider;
 
+import com.yuanstack.xconfig.client.annotation.EnableXConfig;
 import com.yuanstack.xrpc.core.api.RpcRequest;
 import com.yuanstack.xrpc.core.api.RpcResponse;
 import com.yuanstack.xrpc.core.config.ProviderConfig;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @Import({ProviderConfig.class})
 //@EnableApolloConfig
+@EnableXConfig
 @Slf4j
 public class XrpcDemoProviderApplication {
 
